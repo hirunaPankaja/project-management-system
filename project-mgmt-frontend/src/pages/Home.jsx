@@ -1,14 +1,19 @@
 import Tile from "../components/Tile";
-import { adminTiles } from "../components/tiles/adminTiles";
-import { designerTiles } from "../components/tiles/designerTiles";
+import { adminTiles } from "../components/UserRolesTiles";
+import TopHeader from "../components/header/TopHeader";
+import SideHeader from "../components/header/SideHeader";
 
-// Fake login for now (replace with Redux or context)
-const userRole = "admin"; // Change to test: 'engineer', 'manager'
 
 export default function Home() {
-  let tiles = [];
+  const user = {
+    name: "Hiruna Pankaja",
+    empId: "EMP001",
+    role: "admin",
+    profileImage: "/profile.png",
+  };
 
-  switch (userRole) {
+  let tiles = [];
+  switch (user.role) {
     case "designer":
       tiles = designerTiles;
       break;
@@ -20,12 +25,27 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Welcome {userRole}</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {tiles.map((tile, index) => (
-          <Tile key={index} name={tile.name} icon={tile.icon} color={tile.color} />
-        ))}
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      {/* Top Header (no parent padding!) */}
+      <TopHeader user={user} />
+
+      {/* Body below header */}
+      <div className="flex flex-1">
+        <SideHeader role={user.role} />
+
+        {/* Dashboard main area */}
+        <main className="flex-1 p-6 mt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {tiles.map((tile, index) => (
+              <Tile
+                key={index}
+                name={tile.name}
+                icon={tile.icon}
+                color={tile.color}
+              />
+            ))}
+          </div>
+        </main>
       </div>
     </div>
   );
