@@ -3,6 +3,7 @@ import NotFound from "../pages/notFound.jsx";
 import LandingPage from "../pages/LandingPage.jsx";
 import EmployeeLogin from "../pages/EmployeeLogin.jsx";
 import TEST from "../pages/test.jsx"; 
+import Home from "../pages/Home.jsx"; 
 
 
 const AppRouter = () => (
@@ -10,7 +11,7 @@ const AppRouter = () => (
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/employee-login" element={<EmployeeLogin />} />
-      <Route path="/home" element={<TEST />} />
+      <Route path="/home" element={<Home />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   </BrowserRouter>
