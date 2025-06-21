@@ -30,7 +30,7 @@ export default function SideHeader({ role }) {
 
   return (
     <div 
-      className={`bg-white shadow transition-all duration-300 ease-in-out ${expanded ? 'w-64' : 'w-20'}`}
+      className={`bg-white shadow transition-all duration-300 ease-in-out ${expanded ? 'w-64' : 'w-15'}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

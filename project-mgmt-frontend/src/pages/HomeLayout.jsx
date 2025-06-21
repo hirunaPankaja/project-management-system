@@ -14,7 +14,7 @@ export default function HomeLayout() {
       <TopHeader user={user} />
       <div className="flex flex-1">
         <SideHeader role={user.role} />
-        <main className="flex-1 p-6 mt-1">
+        <main className="flex-1 p-5 mt-1">
           <Outlet />
         </main>
       </div>
