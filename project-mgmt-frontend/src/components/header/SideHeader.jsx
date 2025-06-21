@@ -1,66 +1,58 @@
-// components/layout/SideHeader.jsx
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  designerNav,
-  engineerNav,
-  managerNav,
-  adminNav,
-} from "./SideNavOptions";
+import { userRolesConfig } from "../../config/UserRoles";
+import { useState, useEffect, useRef } from "react";
 
-export default function SideHeader({ role = "designer" }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [timeoutId, setTimeoutId] = useState(null);
-
-  let navItems = [];
-  switch (role) {
-    case "designer":
-      navItems = designerNav;
-      break;
-    case "engineer":
-      navItems = engineerNav;
-      break;
-    case "manager":
-      navItems = managerNav;
-      break;
-    case "admin":
-      navItems = adminNav;
-      break;
-    default:
-      navItems = [];
-  }
+export default function SideHeader({ role }) {
+  const [expanded, setExpanded] = useState(false);
+  const timeoutRef = useRef(null);
+  const navItems = userRolesConfig[role]?.nav || [];
 
   const handleMouseEnter = () => {
-    clearTimeout(timeoutId);
-    setIsExpanded(true);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setExpanded(true);
   };
 
   const handleMouseLeave = () => {
-    const id = setTimeout(() => {
-      setIsExpanded(false);
-    }, 1500); // auto-collapse after 1.5s
-    setTimeoutId(id);
+    timeoutRef.current = setTimeout(() => {
+      setExpanded(false);
+    }, 1000); // 1 second delay before auto-collapse
   };
 
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <aside
+    <div 
+      className={`bg-white shadow transition-all duration-300 ease-in-out ${expanded ? 'w-64' : 'w-20'}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`transition-all duration-300 ease-in-out bg-white shadow-lg h-screen 
-        ${isExpanded ? "w-64" : "w-16"} fixed md:static z-10`}
     >
       <div className="p-4">
-        {navItems.map((item, index) => (
-          <Link
-            key={index}
-            to={item.path}
-            className="flex items-center p-2 rounded-md text-gray-700 hover:bg-emerald-100 transition-all"
-          >
-            <item.icon className="w-6 h-6 text-emerald-600" />
-            {isExpanded && <span className="ml-3">{item.label}</span>}
-          </Link>
-        ))}
+        {expanded && <h2 className="text-xl font-semibold">Navigation</h2>}
+        <nav className="mt-4">
+          <ul>
+            {navItems.map((item, index) => (
+              <li key={index} className="mb-2">
+                <Link 
+                  to={`/home/${item.path}`} 
+                  className="flex items-center p-2 rounded hover:bg-gray-100"
+                  title={!expanded ? item.label : ''}
+                >
+                  <item.icon className="w-5 h-5" />
+                  {expanded && <span className="ml-3">{item.label}</span>}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
-    </aside>
+    </div>
   );
 }

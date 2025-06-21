@@ -1,10 +1,37 @@
 import { Bell, MessageCircle } from "lucide-react";
-import keellsLogo from '../assets/keells_logo.png';
+import { useState } from "react";
+import keellsLogo from "../../assets/keells_logo.png";
+import defaultUserImage from "../../assets/default_user_image.png";
+import NotificationOverlay from "../../components/NotificationOverlay";
 
 export default function TopHeader({ user }) {
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  // 🔔 Example mock notifications
+  const notifications = [
+    {
+      id: 1,
+      message: "Design review at 2 PM",
+      time: "5 mins ago",
+      type: "meeting",
+    },
+    {
+      id: 2,
+      message: "New file uploaded by Engineer",
+      time: "10 mins ago",
+      type: "system",
+    },
+    {
+      id: 3,
+      message: "Weekly report due tomorrow",
+      time: "1 hour ago",
+      type: "reminder",
+    },
+  ];
+
   return (
-    <header className="w-full h-16 bg-white shadow flex items-center justify-between px-6">
-      {/* Left section: Logo + App Name */}
+    <header className="w-full h-16 bg-white shadow flex items-center justify-between px-6 relative">
+      {/* Left: Logo and App Name */}
       <div className="flex items-center gap-2">
         <img
           src={keellsLogo}
@@ -14,14 +41,24 @@ export default function TopHeader({ user }) {
         <span className="text-xl font-bold text-emerald-600">ProjectHub</span>
       </div>
 
-      {/* Right section: Notifications & User Info */}
-      <div className="flex items-center gap-4">
-        {/* Bell Icon with notification dot */}
+      {/* Right: Icons and User Info */}
+      <div className="flex items-center gap-7">
+        {/* Bell Icon */}
         <div className="relative">
-          <Bell className="w-6 h-6 text-gray-600 hover:text-black cursor-pointer" />
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
-            3
-          </span>
+          <Bell
+            className="w-6 h-6 text-gray-600 hover:text-black cursor-pointer"
+            onClick={() => setShowNotifications((prev) => !prev)}
+          />
+          {notifications.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+              {notifications.length}
+            </span>
+          )}
+          <NotificationOverlay
+            open={showNotifications}
+            onClose={() => setShowNotifications(false)}
+            notifications={notifications}
+          />
         </div>
 
         {/* Message Icon */}
@@ -30,7 +67,7 @@ export default function TopHeader({ user }) {
         {/* User Info */}
         <div className="flex items-center space-x-2">
           <img
-            src={user?.profileImage || "/default-profile.png"}
+            src={user?.profileImage || defaultUserImage}
             alt="User"
             className="h-9 w-9 rounded-full object-cover"
           />
