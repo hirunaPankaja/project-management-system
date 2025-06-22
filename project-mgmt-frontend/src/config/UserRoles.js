@@ -4,18 +4,16 @@ export const userRolesConfig = {
   admin: {
     tiles: [
       { name: "Register Employee", icon: User, color: "bg-yellow-600", path: "admin/register-employee" },
-      { name: "Materials", icon: HardHat, color: "bg-orange-500", path: "admin/materials" },
-      { name: "Progress", icon: BarChart2, color: "bg-teal-600", path: "admin/progress" }
+      { name: "Search Employee", icon: HardHat, color: "bg-orange-500", path: "admin/search-employee" },
     ],
     nav: [
-      { label: "Dashboard", path: "admin/dashboard", icon: LayoutDashboard },
-      { label: "Employees", path: "admin/employees", icon: Users },
-      { label: "Reports", path: "admin/reports", icon: BarChart2 }
+      { label: "Register Employee", path: "admin/register-employee", icon: LayoutDashboard },
+      { label: "Search Employee", path: "admin/search-employee", icon: Users },
     ]
   },
   designer: {
     tiles: [
-      { name: "Designs", icon: PenTool, color: "bg-yellow-600", path: "designer/designs" },
+      { name: "Designs Pool", icon: PenTool, color: "bg-yellow-600", path: "designer/designs-pool" },
       { name: "Create", icon: FileText, color: "bg-orange-500", path: "designer/create" },
       { name: "Projects", icon: HardHat, color: "bg-teal-600", path: "designer/projects" }
     ],
