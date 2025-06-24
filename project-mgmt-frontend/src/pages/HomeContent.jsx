@@ -1,13 +1,10 @@
 import { userRolesConfig } from "../config/UserRoles.js";
 import Tile from "../components/Tile";
+import { useEffect, user} from "react";
 
 export default function HomeContent() {
 
-  const userRole = "supplier";
-
-
   const userRole = "propertyofficer";
-
 
   const tiles = userRolesConfig[userRole]?.tiles || [];
   return (

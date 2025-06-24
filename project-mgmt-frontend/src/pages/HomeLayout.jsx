@@ -7,7 +7,7 @@ export default function HomeLayout() {
     id: 1,
     name: "John Doe",
     empId: "EMP123",
-    role: "supplier"
+    role: "propertyofficer",
    };
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">

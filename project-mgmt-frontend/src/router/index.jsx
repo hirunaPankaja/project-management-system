@@ -13,8 +13,6 @@ import PropertyOfficerDashboard from "../pages/propertyOfficer/PropertyOfficerDa
 import PropertyOfficerProposal from "../pages/propertyOfficer/PropertyOfficerProposal";
 import PropertyOfficerFeedback from "../pages/propertyOfficer/PropertyOfficerFeedback";
 
-import SupplierProductCatalog from "../pages/supplier/ProductCatalog";
-
 
 
 const AppRouter = () => (
@@ -33,17 +31,13 @@ const AppRouter = () => (
         <Route path="supplier/supplier-dashboard" element={<SupplierRegistration />} />
         <Route path="supplier/product-catalog" element={<SupplierProductCatalog />} />
         <Route path="supplier/contracts" element={<SupplierRegistration />} />        
+        
+        <Route path="propertyofficer/dashboard" element={<PropertyOfficerDashboard />} />
+        <Route path="propertyofficer/proposal" element={<PropertyOfficerProposal />} />
+        <Route path="propertyofficer/feedback" element={<PropertyOfficerFeedback />} />
 
 
-        {/* Property Officer Routes */}
-      <Route path="/propertyofficer/dashboard" element={<PropertyOfficerDashboard />} />
-      <Route path="/propertyofficer/proposal" element={<PropertyOfficerProposal />} />
-      <Route path="/propertyofficer/feedback" element={<PropertyOfficerFeedback />} />
-
-        <Route path="supplier/supplier-dashboard" element={<SupplierRegistration />} />
-        <Route path="supplier/product-catalog" element={<SupplierProductCatalog />} />
-        <Route path="supplier/contracts" element={<SupplierRegistration />} />        
-
+       
 
       </Route>
 
