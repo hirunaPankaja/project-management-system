@@ -9,6 +9,13 @@ import SearchEmployee from "../pages/admin/SearchEmployee";
 import Designs from "../pages/designer/designs";
 import SupplierRegistration from "../pages/supplier/SupplierRegistration";
 import SupplierProductCatalog from "../pages/supplier/ProductCatalog";
+import PropertyOfficerDashboard from "../pages/propertyOfficer/PropertyOfficerDashboard";
+import PropertyOfficerProposal from "../pages/propertyOfficer/PropertyOfficerProposal";
+import PropertyOfficerFeedback from "../pages/propertyOfficer/PropertyOfficerFeedback";
+
+import SupplierProductCatalog from "../pages/supplier/ProductCatalog";
+
+
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -22,10 +29,26 @@ const AppRouter = () => (
         <Route path="admin/register-employee" element={<RegisterEmployee />} />
         <Route path="admin/search-employee" element={<SearchEmployee />} />
         <Route path="designer/design-pool" element={<Designs />} />
+
         <Route path="supplier/supplier-dashboard" element={<SupplierRegistration />} />
         <Route path="supplier/product-catalog" element={<SupplierProductCatalog />} />
         <Route path="supplier/contracts" element={<SupplierRegistration />} />        
+
+
+        {/* Property Officer Routes */}
+      <Route path="/propertyofficer/dashboard" element={<PropertyOfficerDashboard />} />
+      <Route path="/propertyofficer/proposal" element={<PropertyOfficerProposal />} />
+      <Route path="/propertyofficer/feedback" element={<PropertyOfficerFeedback />} />
+
+        <Route path="supplier/supplier-dashboard" element={<SupplierRegistration />} />
+        <Route path="supplier/product-catalog" element={<SupplierProductCatalog />} />
+        <Route path="supplier/contracts" element={<SupplierRegistration />} />        
+
+
       </Route>
+
+
+
       <Route path="*" element={<NotFound />} />
     </Routes>
   </BrowserRouter>

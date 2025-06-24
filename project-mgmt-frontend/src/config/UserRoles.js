@@ -1,4 +1,4 @@
-import { User, HardHat, BarChart2, PenTool, FileText, LayoutDashboard, Hammer, Users } from "lucide-react";
+import { User, HardHat, BarChart2, PenTool, FileText, LayoutDashboard, Hammer, Users,MessageSquare } from "lucide-react";
 
 export const userRolesConfig = {
   admin: {
@@ -33,6 +33,16 @@ export const userRolesConfig = {
       { label: "Dashboard", path: "designer/dashboard", icon: LayoutDashboard },
       { label: "Designs", path: "designer/designs", icon: PenTool },
       { label: "Drafts", path: "designer/drafts", icon: FileText }
+    ]
+  },
+propertyofficer: {
+    tiles: [
+      { name: "Submit Proposal", icon: FileText, color: "bg-green-600", path: "propertyofficer/proposal" },
+      { name: "View Feedback", icon: MessageSquare, color: "bg-green-400", path: "propertyofficer/feedback" },
+    ],
+    nav: [
+      { label: "Proposals", path: "propertyofficer/proposal", icon: FileText },
+      { label: "Feedback", path: "propertyofficer/feedback", icon: MessageSquare },
     ]
   }
 };
