@@ -9,7 +9,6 @@ import SearchEmployee from "../pages/admin/SearchEmployee";
 import Designs from "../pages/designer/designs";
 import SupplierRegistration from "../pages/supplier/SupplierRegistration";
 import SupplierProductCatalog from "../pages/supplier/ProductCatalog";
-import PropertyOfficerDashboard from "../pages/propertyOfficer/PropertyOfficerDashboard";
 import PropertyOfficerProposal from "../pages/propertyOfficer/PropertyOfficerProposal";
 import PropertyOfficerFeedback from "../pages/propertyOfficer/PropertyOfficerFeedback";
 
@@ -32,16 +31,12 @@ const AppRouter = () => (
         <Route path="supplier/product-catalog" element={<SupplierProductCatalog />} />
         <Route path="supplier/contracts" element={<SupplierRegistration />} />        
         
-        <Route path="propertyofficer/dashboard" element={<PropertyOfficerDashboard />} />
         <Route path="propertyofficer/proposal" element={<PropertyOfficerProposal />} />
         <Route path="propertyofficer/feedback" element={<PropertyOfficerFeedback />} />
 
 
-       
 
-      </Route>
-
-
+    </Route>
 
       <Route path="*" element={<NotFound />} />
     </Routes>

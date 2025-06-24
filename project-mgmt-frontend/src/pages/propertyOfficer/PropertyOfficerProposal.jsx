@@ -1,13 +1,93 @@
-// Proposals.jsx
-import React from 'react';
+import React, { useState } from 'react';
 
-const Proposals = () => {
+const PropertyOfficerProposal = () => {
+  const [formData, setFormData] = useState({
+    proposal_name: '',
+    area: '',
+    propose_date: '',
+    proposal_status_date: '',
+    proposal_status: '',
+    rent_fee: '',
+    property_owner_name: '',
+    property_owner_contact_no: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Submitted Proposal:", formData);
+    // TODO: Hook this up to your backend API
+  };
+
   return (
-    <div className="p-8">
-      <h2 className="text-2xl font-bold text-green-700 mb-4">Your Proposals</h2>
-      {/* List proposals or show submission form here */}
+    <div className="flex justify-center py-10 bg-gray-50 px-4">
+      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-8">
+        <h2 className="text-2xl font-bold text-green-700 mb-8 text-center">
+          Property Proposal
+        </h2>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col">
+            <label htmlFor="proposal_name" className="text-sm text-gray-700 mb-1">Proposal Name</label>
+            <input id="proposal_name" name="proposal_name" value={formData.proposal_name} onChange={handleChange}
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="area" className="text-sm text-gray-700 mb-1">Area</label>
+            <input id="area" name="area" value={formData.area} onChange={handleChange}
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="propose_date" className="text-sm text-gray-700 mb-1">Propose Date</label>
+            <input type="date" id="propose_date" name="propose_date" value={formData.propose_date} onChange={handleChange}
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="proposal_status_date" className="text-sm text-gray-700 mb-1">Status Date</label>
+            <input type="date" id="proposal_status_date" name="proposal_status_date" value={formData.proposal_status_date} onChange={handleChange}
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="proposal_status" className="text-sm text-gray-700 mb-1">Status</label>
+            <input id="proposal_status" name="proposal_status" value={formData.proposal_status} onChange={handleChange}
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="rent_fee" className="text-sm text-gray-700 mb-1">Rent Fee (Rs.)</label>
+            <input type="number" id="rent_fee" name="rent_fee" value={formData.rent_fee} onChange={handleChange}
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="property_owner_name" className="text-sm text-gray-700 mb-1">Owner Name</label>
+            <input id="property_owner_name" name="property_owner_name" value={formData.property_owner_name} onChange={handleChange}
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="property_owner_contact_no" className="text-sm text-gray-700 mb-1">Owner Contact No.</label>
+            <input type="tel" id="property_owner_contact_no" name="property_owner_contact_no" value={formData.property_owner_contact_no} onChange={handleChange}
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+          </div>
+
+          <div className="md:col-span-2">
+            <button type="submit"
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition">
+              Submit Proposal
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default Proposals;
+export default PropertyOfficerProposal;

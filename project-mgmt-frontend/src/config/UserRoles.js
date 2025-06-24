@@ -37,8 +37,8 @@ export const userRolesConfig = {
   },
 propertyofficer: {
     tiles: [
-      { name: "Submit Proposal", icon: FileText, color: "bg-green-600", path: "propertyofficer/proposal" },
-      { name: "View Feedback", icon: MessageSquare, color: "bg-green-400", path: "propertyofficer/feedback" },
+      { name: "Proposal", icon: FileText, color: "bg-green-600", path: "propertyofficer/proposal" },
+      { name: "View Feedback", icon: MessageSquare, color: "bg-yellow-400", path: "propertyofficer/feedback" },
     ],
     nav: [
       { label: "Proposals", path: "propertyofficer/proposal", icon: FileText },

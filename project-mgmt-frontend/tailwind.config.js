@@ -32,6 +32,7 @@ export default {
       animation: {
         'wire-flicker': 'wire-flicker 3s infinite',
       },
+      
     },
   },
   plugins: [],
