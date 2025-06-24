@@ -8,6 +8,7 @@ import RegisterEmployee from "../pages/admin/RegisterEmployee";
 import SearchEmployee from "../pages/admin/SearchEmployee";
 import Designs from "../pages/designer/designs";
 import SupplierRegistration from "../pages/supplier/SupplierRegistration";
+import SupplierProductCatalog from "../pages/supplier/ProductCatalog";
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -21,6 +22,9 @@ const AppRouter = () => (
         <Route path="admin/register-employee" element={<RegisterEmployee />} />
         <Route path="admin/search-employee" element={<SearchEmployee />} />
         <Route path="designer/design-pool" element={<Designs />} />
+        <Route path="supplier/supplier-dashboard" element={<SupplierRegistration />} />
+        <Route path="supplier/product-catalog" element={<SupplierProductCatalog />} />
+        <Route path="supplier/contracts" element={<SupplierRegistration />} />        
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>

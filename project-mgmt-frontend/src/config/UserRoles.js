@@ -11,10 +11,22 @@ export const userRolesConfig = {
       { label: "Search Employee", path: "admin/search-employee", icon: Users },
     ]
   },
+  supplier: {
+    tiles: [
+      { name: "Supplier Dashboard", icon: Hammer, color: "bg-yellow-600", path: "supplier/supplier-dashboard" },
+      { name: "Product Catalog", icon: BarChart2, color: "bg-orange-500", path: "supplier/product-catalog" },
+      { name: "Contracts", icon: Hammer, color: "bg-teal-600", path: "supplier/contracts" },
+    ],
+    nav: [
+      { label: "Supplier Registration", path: "supplier/supplier-dashboard", icon: Hammer },
+      { label: "Product Catalog", path: "supplier/product-catalog", icon: BarChart2 },
+      { label: "Contracts", path: "supplier/contracts", icon: Hammer }
+    ] 
+  },
   designer: {
     tiles: [
       { name: "Designs Pool", icon: PenTool, color: "bg-yellow-600", path: "designer/designs-pool" },
-      { name: "Create", icon: FileText, color: "bg-orange-500", path: "designer/create" },
+      { name: "Create ", icon: FileText, color: "bg-orange-500", path: "designer/create" },
       { name: "Projects", icon: HardHat, color: "bg-teal-600", path: "designer/projects" }
     ],
     nav: [
