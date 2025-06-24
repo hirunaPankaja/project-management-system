@@ -11,7 +11,7 @@ import SupplierRegistration from "../pages/supplier/SupplierRegistration";
 import SupplierProductCatalog from "../pages/supplier/ProductCatalog";
 import PropertyOfficerProposal from "../pages/propertyOfficer/PropertyOfficerProposal";
 import PropertyOfficerFeedback from "../pages/propertyOfficer/PropertyOfficerFeedback";
-import PropertyManagerViewProposals from "../pages/propertymanager/PropertyManagerViewProposals";
+import PropertyManagerViewProposals from "../pages/propertymanager/PropertyManagerProposals";
 
 
 

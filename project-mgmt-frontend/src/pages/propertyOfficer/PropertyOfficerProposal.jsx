@@ -5,11 +5,11 @@ const PropertyOfficerProposal = () => {
     proposal_name: '',
     area: '',
     propose_date: '',
-    proposal_status_date: '',
-    proposal_status: '',
     rent_fee: '',
     property_owner_name: '',
-    property_owner_contact_no: ''
+    property_owner_contact_no: '',
+    longitude: '',
+    latitude: ''
   });
 
   const handleChange = (e) => {
@@ -20,7 +20,7 @@ const PropertyOfficerProposal = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Submitted Proposal:", formData);
-    // TODO: Hook this up to your backend API
+    // TODO: Connect to backend API
   };
 
   return (
@@ -33,49 +33,49 @@ const PropertyOfficerProposal = () => {
           <div className="flex flex-col">
             <label htmlFor="proposal_name" className="text-sm text-gray-700 mb-1">Proposal Name</label>
             <input id="proposal_name" name="proposal_name" value={formData.proposal_name} onChange={handleChange}
-              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500" required />
           </div>
 
           <div className="flex flex-col">
             <label htmlFor="area" className="text-sm text-gray-700 mb-1">Area</label>
             <input id="area" name="area" value={formData.area} onChange={handleChange}
-              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500" required />
           </div>
 
           <div className="flex flex-col">
             <label htmlFor="propose_date" className="text-sm text-gray-700 mb-1">Propose Date</label>
             <input type="date" id="propose_date" name="propose_date" value={formData.propose_date} onChange={handleChange}
-              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="proposal_status_date" className="text-sm text-gray-700 mb-1">Status Date</label>
-            <input type="date" id="proposal_status_date" name="proposal_status_date" value={formData.proposal_status_date} onChange={handleChange}
-              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="proposal_status" className="text-sm text-gray-700 mb-1">Status</label>
-            <input id="proposal_status" name="proposal_status" value={formData.proposal_status} onChange={handleChange}
-              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500" required />
           </div>
 
           <div className="flex flex-col">
             <label htmlFor="rent_fee" className="text-sm text-gray-700 mb-1">Rent Fee (Rs.)</label>
             <input type="number" id="rent_fee" name="rent_fee" value={formData.rent_fee} onChange={handleChange}
-              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500" required />
           </div>
 
           <div className="flex flex-col">
             <label htmlFor="property_owner_name" className="text-sm text-gray-700 mb-1">Owner Name</label>
             <input id="property_owner_name" name="property_owner_name" value={formData.property_owner_name} onChange={handleChange}
-              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500" required />
           </div>
 
           <div className="flex flex-col">
             <label htmlFor="property_owner_contact_no" className="text-sm text-gray-700 mb-1">Owner Contact No.</label>
             <input type="tel" id="property_owner_contact_no" name="property_owner_contact_no" value={formData.property_owner_contact_no} onChange={handleChange}
-              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" required />
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500" required />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="longitude" className="text-sm text-gray-700 mb-1">Longitude</label>
+            <input type="text" id="longitude" name="longitude" value={formData.longitude} onChange={handleChange}
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500" required />
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="latitude" className="text-sm text-gray-700 mb-1">Latitude</label>
+            <input type="text" id="latitude" name="latitude" value={formData.latitude} onChange={handleChange}
+              className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500" required />
           </div>
 
           <div className="md:col-span-2">
