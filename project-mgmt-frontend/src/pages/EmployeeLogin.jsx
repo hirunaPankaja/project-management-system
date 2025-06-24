@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import keellsLogo from '../assets/keells_logo.png';
 
 export default function EmployeeLogin() {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ export default function EmployeeLogin() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <img
           className="mx-auto h-12 w-auto"
-          src="/keels-logo.png"
+          src={keellsLogo}
           alt="Keels Logo"
         />
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
