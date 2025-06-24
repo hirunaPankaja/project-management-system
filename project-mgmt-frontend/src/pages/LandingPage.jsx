@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import keellsLogo from '../assets/keells_logo.png';
+import SupplierRegistration from './supplier/SupplierRegistration';
 
 export default function LandingPage() {
+  const [showRegistration, setShowRegistration] = useState(false);
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
+    <div className="min-h-screen bg-gray-50 relative">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -30,7 +33,6 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
       <div className="bg-white">
         <div className="max-w-7xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
@@ -43,10 +45,8 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Access Cards */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Employee Access */}
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <div className="flex items-center">
@@ -73,7 +73,6 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Supplier Access */}
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <div className="flex items-center">
@@ -89,20 +88,57 @@ export default function LandingPage() {
                   Approved suppliers can view assigned projects, submit deliverables, and communicate with Keels teams.
                 </p>
               </div>
-              <div className="mt-5">
+              <div className="flex space-x-4 mt-5">
                 <Link
                   to="/supplier-login"
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                 >
-                  Supplier Portal
+                  Supplier Login
                 </Link>
+                <p className="text-sm text-gray-500 flex items-center">Or</p>
+                <button
+                  onClick={() => setShowRegistration(true)}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Supplier Register
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Footer */}
+      {showRegistration && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div 
+              className="fixed inset-0 transition-opacity" 
+              aria-hidden="true"
+              onClick={() => setShowRegistration(false)}
+            >
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+
+            <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+              <div className="absolute top-0 right-0 pt-4 pr-4">
+                <button
+                  type="button"
+                  className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+                  onClick={() => setShowRegistration(false)}
+                >
+                  <span className="sr-only">Close</span>
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <SupplierRegistration onSuccess={() => setShowRegistration(false)} />
+            </div>
+          </div>
+        </div>
+      )}
+
       <footer className="bg-white border-t border-gray-200">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <p className="text-center text-base text-gray-400">
