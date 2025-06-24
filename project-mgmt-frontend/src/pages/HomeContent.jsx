@@ -4,7 +4,7 @@ import { useEffect, user} from "react";
 
 export default function HomeContent() {
 
-  const userRole = "propertyofficer";
+  const userRole = "propertymanager";
 
   const tiles = userRolesConfig[userRole]?.tiles || [];
   return (
