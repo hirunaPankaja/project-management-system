@@ -11,9 +11,8 @@ import SupplierRegistration from "../pages/supplier/SupplierRegistration";
 import SupplierProductCatalog from "../pages/supplier/ProductCatalog";
 import PropertyOfficerProposal from "../pages/propertyOfficer/PropertyOfficerProposal";
 import PropertyOfficerFeedback from "../pages/propertyOfficer/PropertyOfficerFeedback";
-import PropertyManagerViewProposals from "../pages/propertymanager/PropertyManagerViewProposals";
-
-
+import PropertyManagerViewProposals from "../pages/propertyManager/PropertyManagerViewProposals";
+import Map from "../pages/Map";
 
 
 
@@ -36,6 +35,7 @@ const AppRouter = () => (
         
         <Route path="propertyofficer/proposal" element={<PropertyOfficerProposal />} />
         <Route path="propertyofficer/feedback" element={<PropertyOfficerFeedback />} />
+        <Route path="map" element={<Map />} />
 
        <Route path="propertymanager/view-proposals" element={<PropertyManagerViewProposals />} />
 
