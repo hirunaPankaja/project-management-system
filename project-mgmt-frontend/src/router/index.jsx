@@ -16,6 +16,7 @@ import PropertyManagerViewProposals from "../pages/propertymanager/PropertyManag
 import LawyerVerifyProposals from "../pages/lawyer/LawyerVerifyProposals";
 import PropertyExecutiveManageOutlets from "../pages/propertyExective/PropertyExecutiveManageOutlets";
 import PropertyExecutiveOutletAnalysis from "../pages/propertyExective/PropertyExecutiveOutletAnalysis";
+import Contracts from "../pages/supplier/Contracts";
 
 
 
@@ -34,7 +35,7 @@ const AppRouter = () => (
 
         <Route path="supplier/supplier-dashboard" element={<SupplierRegistration />} />
         <Route path="supplier/product-catalog" element={<SupplierProductCatalog />} />
-        <Route path="supplier/contracts" element={<SupplierRegistration />} />        
+        <Route path="supplier/contracts" element={<Contracts />} />        
         
         <Route path="propertyofficer/proposal" element={<PropertyOfficerProposal />} />
         <Route path="propertyofficer/feedback" element={<PropertyOfficerFeedback />} />
