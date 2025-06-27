@@ -3,6 +3,7 @@ import { useState } from "react";
 import keellsLogo from "../../assets/keells_logo.png";
 import defaultUserImage from "../../assets/default_user_image.png";
 import NotificationOverlay from "../../components/NotificationOverlay";
+import { Link } from "react-router-dom";
 
 export default function TopHeader({ user }) {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -31,15 +32,17 @@ export default function TopHeader({ user }) {
 
   return (
     <header className="w-full h-16 bg-white shadow flex items-center justify-between px-6 relative">
+
       {/* Left: Logo and App Name */}
-      <div className="flex items-center gap-2">
+      <Link to ="/home" className="flex items-center gap-2">
         <img
           src={keellsLogo}
           alt="Keells logo"
           className="h-10 w-10 object-contain"
         />
         <span className="text-xl font-bold text-emerald-600">ProjectHub</span>
-      </div>
+        
+      </Link>
 
       {/* Right: Icons and User Info */}
       <div className="flex items-center gap-7">

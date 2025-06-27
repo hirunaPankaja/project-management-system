@@ -13,7 +13,9 @@ import PropertyOfficerProposal from "../pages/propertyOfficer/PropertyOfficerPro
 import PropertyOfficerFeedback from "../pages/propertyOfficer/PropertyOfficerFeedback";
 import Map from "../pages/Map";
 import PropertyManagerViewProposals from "../pages/propertymanager/PropertyManagerProposals";
-
+import LawyerVerifyProposals from "../pages/lawyer/LawyerVerifyProposals";
+import PropertyExecutiveManageOutlets from "../pages/propertyExective/PropertyExecutiveManageOutlets";
+import PropertyExecutiveOutletAnalysis from "../pages/propertyExective/PropertyExecutiveOutletAnalysis";
 
 
 
@@ -40,8 +42,15 @@ const AppRouter = () => (
 
        <Route path="propertymanager/view-proposals" element={<PropertyManagerViewProposals />} />
 
+       <Route path="lawyer/verify-proposals" element={<LawyerVerifyProposals />} />
+
+       <Route path="propertyexecutive/manage-outlets" element={<PropertyExecutiveManageOutlets />} />
+       <Route path="propertyexecutive/outlet-analysis" element={<PropertyExecutiveOutletAnalysis />} />
 
 
+
+
+  
 
     </Route>
 

@@ -1,4 +1,4 @@
-import { User, HardHat, BarChart2, PenTool, FileText, LayoutDashboard, Hammer, Users,MessageSquare,Eye  } from "lucide-react";
+import { User, HardHat, BarChart2, PenTool, FileText, LayoutDashboard, Hammer, Users,MessageSquare,Eye, FileCheck2 , FileBarChart2 ,Store } from "lucide-react";
 
 export const userRolesConfig = {
   admin: {
@@ -62,6 +62,51 @@ propertyofficer: {
       icon: FileText
     }
   ]
-}
+},
+lawyer: {
+    tiles: [
+      {
+        name: "Verify Proposals",
+        icon: FileCheck2,
+        color: "bg-purple-600",
+        path: "lawyer/verify-proposals"
+      }
+    ],
+    nav: [
+      {
+        label: "Verify Proposals",
+        path: "lawyer/verify-proposals",
+        icon: FileCheck2
+      }
+    ]
+  },
+    propertyexecutive: {
+    tiles: [
+      {
+        name: "Manage Outlets",
+        icon: Store,
+        color: "bg-blue-600",
+        path: "propertyexecutive/manage-outlets"
+      },
+      {
+        name: "Outlet Analysis",
+        icon: FileBarChart2,
+        color: "bg-purple-600",
+        path: "propertyexecutive/outlet-analysis"
+      }
+    ],
+    nav: [
+      {
+        label: "Manage Outlets",
+        path: "propertyexecutive/manage-outlets",
+        icon: Store
+      },
+      {
+        label: "Outlet Analysis",
+        path: "propertyexecutive/outlet-analysis",
+        icon: FileBarChart2
+      }
+    ]
+  }
 
 };
