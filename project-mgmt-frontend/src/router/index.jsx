@@ -19,6 +19,9 @@ import PropertyExecutiveOutletAnalysis from "../pages/propertyExective/PropertyE
 import Contracts from "../pages/supplier/Contracts";
 import SupplierDashboard from "../pages/supplier/SupplierDashboard";
 import SupplierLogin from "../pages/supplier/SupplierLogin";
+import TaskLogsPage from "../pages/civilengineer/TaskLogsPage";
+import ManageMeeting from "../pages/ManageMeetingsPage";
+
 
 
 
@@ -50,6 +53,11 @@ const AppRouter = () => (
 
        <Route path="propertyexecutive/manage-outlets" element={<PropertyExecutiveManageOutlets />} />
        <Route path="propertyexecutive/outlet-analysis" element={<PropertyExecutiveOutletAnalysis />} />
+
+       <Route path="civilengineer/task-logs" element={<TaskLogsPage />} />
+
+       <Route path="managemeetings" element={<ManageMeeting />} />
+
 
 
 

@@ -7,7 +7,7 @@ export default function HomeLayout() {
     id: 1,
     name: "John Doe",
     empId: "EMP123",
-    role: "admin",
+    role: "propertyexecutive",
 
    };
   return (

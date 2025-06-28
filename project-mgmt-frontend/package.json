@@ -26,7 +26,7 @@
     "react-router-dom": "^7.6.2",
     "react-toastify": "^11.0.5",
     "rechart": "^0.0.1",
-    "recharts": "^3.0.0",
+    "recharts": "^3.0.2",
     "toastify": "^2.0.1",
     "yup": "^1.6.1"
   },

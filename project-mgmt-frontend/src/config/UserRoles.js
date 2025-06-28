@@ -1,4 +1,4 @@
-import { User, HardHat, BarChart2, PenTool, FileText, LayoutDashboard, Hammer, Users,MessageSquare,Eye, FileCheck2 , FileBarChart2 ,Store } from "lucide-react";
+import { User, HardHat, BarChart2, PenTool, FileText, LayoutDashboard, Hammer, Users,MessageSquare,Eye, FileCheck2 , FileBarChart2 ,Store , Map , ClipboardList, CalendarClock} from "lucide-react";
 
 export const userRolesConfig = {
   admin: {
@@ -64,22 +64,34 @@ propertyofficer: {
   ]
 },
 lawyer: {
-    tiles: [
-      {
-        name: "Verify Proposals",
-        icon: FileCheck2,
-        color: "bg-purple-600",
-        path: "lawyer/verify-proposals"
-      }
-    ],
-    nav: [
-      {
-        label: "Verify Proposals",
-        path: "lawyer/verify-proposals",
-        icon: FileCheck2
-      }
-    ]
-  },
+  tiles: [
+    {
+      name: "Verify Proposals",
+      icon: FileCheck2,
+      color: "bg-purple-600",
+      path: "lawyer/verify-proposals"
+    },
+    {
+      name: "Map",
+      icon: Map, 
+      color: "bg-blue-500",
+      path: "map"
+    }
+  ],
+  nav: [
+    {
+      label: "Verify Proposals",
+      path: "lawyer/verify-proposals",
+      icon: FileCheck2
+    },
+    {
+      label: "Map",
+      path: "map",
+      icon: Map 
+    }
+  ]
+},
+
     propertyexecutive: {
     tiles: [
       {
@@ -107,6 +119,54 @@ lawyer: {
         icon: FileBarChart2
       }
     ]
-  }
+  },
+
+  civilEngineer: {
+  tiles: [
+    {
+      name: "Task Logs",
+      icon: ClipboardList, // use any relevant icon
+      color: "bg-green-600",
+      path: "civilengineer/task-logs"
+    },
+    {
+      name: "Map",
+      icon: Map, 
+      color: "bg-blue-500",
+      path: "map"
+    }
+  ],
+  nav: [
+    {
+      label: "Task Logs",
+      path: "civilengineer/task-logs",
+      icon: ClipboardList
+    },
+     {
+      label: "Map",
+      path: "map",
+      icon: Map 
+    }
+  ]
+},
+
+headOfDepartment: {
+  tiles: [
+    {
+      name: "Manage Meetings",
+      icon: CalendarClock,
+      color: "bg-indigo-600",
+      path: "managemeetings"
+    }
+  ],
+  nav: [
+    {
+      label: "Meetings",
+      path: "managemeetings",
+      icon: CalendarClock
+    }
+  ]
+}
+
 
 };

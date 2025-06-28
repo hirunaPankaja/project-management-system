@@ -1,14 +1,12 @@
 // src/pages/SriLankaMap.jsx
 import { useEffect, useRef, useState } from "react";
 import { MapPin, FileText, Map, Filter, X } from "lucide-react";
-//import retro from "./mapStyles/retro.json";
-//import night from "./mapStyles/night.json";
+
 
 // Define your map styles
 const customMapStyles = {
   default: [],
-// retro:retro,
-  //night:night
+
 }
 const dummyProposals = [
   {
