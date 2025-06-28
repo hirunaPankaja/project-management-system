@@ -1,4 +1,4 @@
-import { User, HardHat, BarChart2, PenTool, FileText, LayoutDashboard, Hammer, Users,MessageSquare,Eye, FileCheck2 , FileBarChart2 ,Store , Map , ClipboardList, CalendarClock} from "lucide-react";
+import { User, HardHat, BarChart2, PenTool, FileText, LayoutDashboard, Hammer, Users,MessageSquare,Eye, FileCheck2 , FileBarChart2 ,Store , Map , ClipboardList, CalendarClock, FolderKanban } from "lucide-react";
 
 export const userRolesConfig = {
   admin: {
@@ -166,7 +166,58 @@ headOfDepartment: {
       icon: CalendarClock
     }
   ]
-}
+},
 
+projectManager: {
+  tiles: [
+    {
+      name: "Dashboard",
+      icon: LayoutDashboard,
+      color: "bg-indigo-600",
+      path: "project-manager/dashboard"
+    },
+    {
+      name: "Projects",
+      icon: FolderKanban,
+      color: "bg-blue-600",
+      path: "project-manager/projects"
+    },
+    {
+      name: "Manage Meetings",
+      icon: CalendarClock,
+      color: "bg-indigo-600",
+      path: "managemeetings"
+    },
+    {
+        name: "Report",
+        icon: FileBarChart2,
+        color: "bg-green-600",
+        path: "project-manager/report"
+      }
+    
+  ],
+  nav: [
+    {
+      label: "Dashboard",
+      path: "project-manager/dashboard",
+      icon: LayoutDashboard
+    },
+    {
+      label: "Projects",
+      path: "project-manager/projects",
+      icon: FolderKanban
+    },
+    {
+      label: "Meetings",
+      path: "managemeetings",
+      icon: CalendarClock
+    },
+    {
+        label: "Report",
+        path: "project-manager/report",
+        icon: FileBarChart2
+      }
+  ]
+}
 
 };

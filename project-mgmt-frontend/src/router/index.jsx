@@ -21,6 +21,9 @@ import SupplierDashboard from "../pages/supplier/SupplierDashboard";
 import SupplierLogin from "../pages/supplier/SupplierLogin";
 import TaskLogsPage from "../pages/civilengineer/TaskLogsPage";
 import ManageMeeting from "../pages/ManageMeetingsPage";
+import ProjectManagerProjects from "../pages/projectmanager/ProjectSection";
+import ProjectDashboard from "../pages/projectmanager/ProjectDashboard";
+import ProjectReport from "../pages/projectmanager/ProjectReport";
 
 
 
@@ -57,6 +60,12 @@ const AppRouter = () => (
        <Route path="civilengineer/task-logs" element={<TaskLogsPage />} />
 
        <Route path="managemeetings" element={<ManageMeeting />} />
+
+       <Route path="project-manager/projects" element={<ProjectManagerProjects />} />
+
+       <Route path="project-manager/dashboard" element={<ProjectDashboard />} />
+
+       <Route path="project-manager/report" element={<ProjectReport />} />
 
 
 
