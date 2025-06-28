@@ -17,6 +17,8 @@ import LawyerVerifyProposals from "../pages/lawyer/LawyerVerifyProposals";
 import PropertyExecutiveManageOutlets from "../pages/propertyExective/PropertyExecutiveManageOutlets";
 import PropertyExecutiveOutletAnalysis from "../pages/propertyExective/PropertyExecutiveOutletAnalysis";
 import Contracts from "../pages/supplier/Contracts";
+import SupplierDashboard from "../pages/supplier/SupplierDashboard";
+import SupplierLogin from "../pages/supplier/SupplierLogin";
 
 
 
@@ -25,6 +27,7 @@ const AppRouter = () => (
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/employee-login" element={<EmployeeLogin />} />
+      <Route path="/supplier-login" element={<SupplierLogin />} />
       <Route path="/supplier-registration" element={<SupplierRegistration />}/>
        
       <Route path="/home" element={<HomeLayout />}>
@@ -33,7 +36,7 @@ const AppRouter = () => (
         <Route path="admin/search-employee" element={<SearchEmployee />} />
         <Route path="designer/design-pool" element={<Designs />} />
 
-        <Route path="supplier/supplier-dashboard" element={<SupplierRegistration />} />
+        <Route path="supplier/supplier-dashboard" element={<SupplierDashboard />} />
         <Route path="supplier/product-catalog" element={<SupplierProductCatalog />} />
         <Route path="supplier/contracts" element={<Contracts />} />        
         
@@ -49,9 +52,6 @@ const AppRouter = () => (
        <Route path="propertyexecutive/outlet-analysis" element={<PropertyExecutiveOutletAnalysis />} />
 
 
-
-
-  
 
     </Route>
 

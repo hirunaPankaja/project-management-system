@@ -1,154 +1,168 @@
-import { useState } from "react";
+// src/pages/SupplierProductCatalog.jsx
+
+import React, { useEffect, useState } from "react";
 import ProductCard from "../../components/ProductCard";
+import { Plus } from "lucide-react";
+import { addProducts, viewProducts } from "../../services/supplierApi";
+import { toast } from "react-toastify";
 
 export default function SupplierProductCatalog() {
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: "Cement 50kg",
-      image: "https://via.placeholder.com/150",
-      price: 1200,
-      unit: "bag",
-      discount: { percentage: 10, description: "New Year Deal" },
-    },
-    {
-      id: 2,
-      name: "Bricks (100 units)",
-      image: "https://via.placeholder.com/150",
-      price: 8000,
-      unit: "bundle",
-      discount: null,
-    },
-    {
-      id: 3,
-      name: "Paint 4L",
-      image: "https://via.placeholder.com/150",
-      price: 3200,
-      unit: "can",
-      discount: { percentage: 5, description: "Bulk Offer" },
-    },
-  ]);
+  const [supplierId, setSupplierId] = useState(null);
+  const [products, setProducts] = useState([]);
 
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [newProduct, setNewProduct] = useState({
+    productName: "",
+    productDescription: "",
+    productPrice: 0,
+    sellingUnit: "",
+    category: "",
+    productImage: "",
+  });
 
-  const handleEdit = (id) => {
-    const product = products.find((p) => p.id === id);
-    setEditingProduct({ ...product });
+  useEffect(() => {
+    const storedId = localStorage.getItem("supplierId");
+    if (storedId) {
+      setSupplierId(Number(storedId));
+      fetchProducts(Number(storedId));
+    }
+  }, []);
+
+  const fetchProducts = async (id) => {
+    try {
+      const res = await viewProducts(id);
+      setProducts(res.data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch products.");
+    }
   };
 
-  const handleEditChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setEditingProduct((prev) => ({
+    setNewProduct((prev) => ({
       ...prev,
-      [name]: name === "price" ? Number(value) : value,
+      [name]: name === "productPrice" ? Number(value) : value,
     }));
   };
 
-  const handleDiscountChange = (e) => {
-    const { name, value } = e.target;
-    setEditingProduct((prev) => ({
-      ...prev,
-      discount: {
-        ...prev.discount,
-        [name]: name === "percentage" ? Number(value) : value,
-      },
-    }));
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result;
+        if (result) {
+          const base64 = result.includes(",")
+            ? result.split(",")[1]
+            : result;
+          setNewProduct((prev) => ({
+            ...prev,
+            productImage: base64,
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleSave = () => {
-    setProducts((prev) =>
-      prev.map((p) =>
-        p.id === editingProduct.id
-          ? {
-              ...editingProduct,
-              discount:
-                editingProduct.discount &&
-                editingProduct.discount.percentage
-                  ? editingProduct.discount
-                  : null,
-            }
-          : p
-      )
-    );
-    setEditingProduct(null);
+  const handleAddProduct = async () => {
+    if (!newProduct.productName.trim()) {
+      toast.error("Product name is required.");
+      return;
+    }
+
+    try {
+      await addProducts({
+        supplierId,
+        products: [newProduct],
+      });
+      toast.success("Product added successfully!");
+      setNewProduct({
+        productName: "",
+        productDescription: "",
+        productPrice: 0,
+        sellingUnit: "",
+        category: "",
+        productImage: "",
+      });
+      fetchProducts(supplierId);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add product.");
+    }
   };
 
-  const handleCancel = () => setEditingProduct(null);
+  const handleEdit = (product) => {
+    // Implement edit logic here
+    console.log("Edit product:", product);
+    toast.info("Edit logic not yet implemented.");
+  };
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">My Product Catalog</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">Supplier Product Catalog</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} onEdit={handleEdit} />
+          <ProductCard key={product.productId} product={product} onEdit={handleEdit} />
         ))}
       </div>
 
-      {/* Edit Modal */}
-      {editingProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
-            <h3 className="text-lg font-bold mb-4">Edit Product</h3>
-            <div className="mb-3">
-              <label className="block text-sm font-medium">Price</label>
-              <input
-                type="number"
-                name="price"
-                value={editingProduct.price}
-                onChange={handleEditChange}
-                className="w-full border rounded px-2 py-1"
-              />
-            </div>
-            <div className="mb-3">
-              <label className="block text-sm font-medium">Unit</label>
-              <input
-                type="text"
-                name="unit"
-                value={editingProduct.unit}
-                onChange={handleEditChange}
-                className="w-full border rounded px-2 py-1"
-              />
-            </div>
-            <div className="mb-3">
-              <label className="block text-sm font-medium">Discount Percentage</label>
-              <input
-                type="number"
-                name="percentage"
-                value={editingProduct.discount?.percentage || ""}
-                onChange={handleDiscountChange}
-                className="w-full border rounded px-2 py-1"
-                min="0"
-                max="100"
-              />
-            </div>
-            <div className="mb-3">
-              <label className="block text-sm font-medium">Discount Description</label>
-              <input
-                type="text"
-                name="description"
-                value={editingProduct.discount?.description || ""}
-                onChange={handleDiscountChange}
-                className="w-full border rounded px-2 py-1"
-              />
-            </div>
-            <div className="flex justify-end space-x-2 mt-4">
-              <button
-                onClick={handleCancel}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <h3 className="text-lg font-bold text-gray-800 mb-4">Add New Product</h3>
+      <div className="flex flex-col md:flex-row items-center gap-4 bg-white p-4 rounded shadow">
+        <input
+          type="text"
+          placeholder="Name"
+          name="productName"
+          value={newProduct.productName}
+          onChange={handleInputChange}
+          className="border px-3 py-2 rounded w-full md:w-1/5"
+        />
+        <input
+          type="text"
+          placeholder="Description"
+          name="productDescription"
+          value={newProduct.productDescription}
+          onChange={handleInputChange}
+          className="border px-3 py-2 rounded w-full md:w-1/5"
+        />
+        <input
+          type="number"
+          placeholder="Price"
+          name="productPrice"
+          value={newProduct.productPrice}
+          onChange={handleInputChange}
+          className="border px-3 py-2 rounded w-full md:w-1/5"
+        />
+        <input
+          type="text"
+          placeholder="Unit"
+          name="sellingUnit"
+          value={newProduct.sellingUnit}
+          onChange={handleInputChange}
+          className="border px-3 py-2 rounded w-full md:w-1/5"
+        />
+        <input
+          type="text"
+          placeholder="Category"
+          name="category"
+          value={newProduct.category}
+          onChange={handleInputChange}
+          className="border px-3 py-2 rounded w-full md:w-1/5"
+        />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="border px-3 py-2 rounded w-full md:w-1/5"
+        />
+        <button
+          onClick={handleAddProduct}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded flex items-center"
+        >
+          <Plus className="w-4 h-4 mr-2" /> Add
+        </button>
+      </div>
     </div>
   );
 }

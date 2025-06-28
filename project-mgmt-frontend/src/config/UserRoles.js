@@ -4,7 +4,7 @@ export const userRolesConfig = {
   admin: {
     tiles: [
       { name: "Register Employee", icon: User, color: "bg-yellow-600", path: "admin/register-employee" },
-      { name: "Search Employee", icon: HardHat, color: "bg-orange-500", path: "admin/search-employee" },
+      { name: "Manage Employee", icon: HardHat, color: "bg-orange-500", path: "admin/search-employee" },
     ],
     nav: [
       { label: "Register Employee", path: "admin/register-employee", icon: LayoutDashboard },
