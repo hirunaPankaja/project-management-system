@@ -1,9 +1,7 @@
 package com.example.project_pms.data;
 
 
-import com.example.project_pms.ProjectStatus;
 import jakarta.persistence.*;
-import lombok.*;
 
 import java.time.LocalDate;
 

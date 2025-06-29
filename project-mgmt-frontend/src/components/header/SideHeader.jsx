@@ -5,7 +5,8 @@ import { useState, useEffect, useRef } from "react";
 export default function SideHeader({ role }) {
   const [expanded, setExpanded] = useState(false);
   const timeoutRef = useRef(null);
-  const navItems = userRolesConfig[role]?.nav || [];
+  const userRole=localStorage.getItem("jobRole");
+  const navItems = userRolesConfig[userRole]?.nav || [];
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) {

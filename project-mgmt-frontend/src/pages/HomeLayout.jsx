@@ -4,17 +4,17 @@ import SideHeader from "../components/header/SideHeader";
 
 export default function HomeLayout() {
   const user = { 
-    id: 1,
-    name: "John Doe",
-    empId: "EMP123",
-    role: "lawyer"
+    id: localStorage.getItem("empId"),
+    name: localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
+    empId: localStorage.getItem("empId"),
+    jobRole: localStorage.getItem("jobRole"),
 
    };
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <TopHeader user={user} />
       <div className="flex flex-1">
-        <SideHeader role={user.role} />
+        <SideHeader jobRole={user.jobRole} />
         <main className="flex-1 p-5 mt-1">
           <Outlet />
         </main>

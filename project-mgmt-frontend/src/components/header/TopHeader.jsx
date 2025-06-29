@@ -77,7 +77,7 @@ export default function TopHeader({ user }) {
           <div className="text-sm text-right">
             <div className="font-medium">{user?.name}</div>
             <div className="text-gray-500 text-xs">
-              {user?.role} • ID: {user?.empId}
+              {user?.jobRole} • ID: {user?.empId}
             </div>
           </div>
         </div>

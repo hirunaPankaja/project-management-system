@@ -24,6 +24,8 @@ import ManageMeeting from "../pages/ManageMeetingsPage";
 import ProjectManagerProjects from "../pages/projectmanager/ProjectSection";
 import ProjectDashboard from "../pages/projectmanager/ProjectDashboard";
 import ProjectReport from "../pages/projectmanager/ProjectReport";
+import ProjectDetails from "../pages/ProjectDetails";
+import ProjectSection from "../pages/projectmanager/ProjectSection";
 
 
 
@@ -64,14 +66,16 @@ const AppRouter = () => (
        <Route path="project-manager/projects" element={<ProjectManagerProjects />} />
 
        <Route path="project-manager/dashboard" element={<ProjectDashboard />} />
-
+      
        <Route path="project-manager/report" element={<ProjectReport />} />
+        <Route path="project-manager/project" element={<ProjectSection />} />
+
 
 
 
 
     </Route>
-
+      <Route path="/project/:projectId" element={<ProjectDetails />} /> 
       <Route path="*" element={<NotFound />} />
     </Routes>
   </BrowserRouter>

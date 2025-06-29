@@ -3,11 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import keellsLogo from '../assets/keells_logo.png';
+import { login } from '../services/employeeApi';
 
 export default function EmployeeLogin() {
   const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [jobRole, setJobRole] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -15,30 +18,48 @@ export default function EmployeeLogin() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Basic validation
-    if (!email || !password) {
-      toast.error('Please enter both email and password');
+    if (!email || !password || !jobRole) {
+      toast.error('Please fill in all fields.');
       setIsLoading(false);
       return;
     }
 
     if (!email.includes('@')) {
-      toast.error('Please enter a valid email address');
+      toast.error('Please enter a valid email address.');
       setIsLoading(false);
       return;
     }
 
-    // Simulate loading
-    setTimeout(() => {
-      toast.success('Login successful! Redirecting...');
-      navigate('/home'); // Navigate to home page
-      setIsLoading(false);
-    }, 1000);
+    login({ email, password, jobRole })
+      .then((response) => {
+     
+
+        const { empId, firstName, lastName } = response.data;
+
+        // Save to local storage
+        localStorage.setItem('empId', empId);
+        localStorage.setItem('firstName', firstName);
+        localStorage.setItem('lastName', lastName);
+        localStorage.setItem('jobRole', jobRole);
+
+        toast.success('Login successful! Redirecting...');
+        navigate('/home');
+      })
+      .catch((error) => {
+        if (error.response && error.response.data) {
+          toast.error(error.response.data);
+        } else {
+          toast.error('Login failed. Please try again.');
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <ToastContainer 
+      <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -49,12 +70,12 @@ export default function EmployeeLogin() {
         draggable
         pauseOnHover
       />
-      
+
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <img
           className="mx-auto h-12 w-auto"
           src={keellsLogo}
-          alt="Keels Logo"
+          alt="Keells Logo"
         />
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Employee Login
@@ -119,6 +140,37 @@ export default function EmployeeLogin() {
               </div>
             </div>
 
+            {/* JOB ROLE SELECTOR */}
+            <div>
+              <label htmlFor="jobRole" className="block text-sm font-medium text-gray-700">
+                Job Role
+              </label>
+              <div className="mt-1">
+                <select
+                  id="jobRole"
+                  name="jobRole"
+                  value={jobRole}
+                  onChange={(e) => setJobRole(e.target.value)}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 sm:text-sm"
+                >
+                  <option value="">-- Select Job Role --</option>
+                  <option value="designer">Designer</option>
+                  <option value="architecture">Architecture</option>
+                  <option value="design-manager">Design Manager</option>
+                  <option value="architecture-manager">Architecture Manager</option>
+                  <option value="project-manager">Project Manager</option>
+                  <option value="civil-engineer">Civil Engineer</option>
+                  <option value="civil-officer">Civil Officer</option>
+                  <option value="property-officer">Property Officer</option>
+                  <option value="property-manager">Property Manager</option>
+                  <option value="property-executive">Property Executive</option>
+                  <option value="procurement-manager">Procurement Manager</option>
+                  <option value="lawyer">Lawyer</option>
+                  <option value="head-of-department">Head of Department</option>
+                </select>
+              </div>
+            </div>
+
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
@@ -151,7 +203,7 @@ export default function EmployeeLogin() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Loging...
+                    Logging...
                   </>
                 ) : 'Log in'}
               </button>

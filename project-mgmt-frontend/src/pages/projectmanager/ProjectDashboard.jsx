@@ -1,57 +1,54 @@
-import React from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  CartesianGrid
-} from "recharts";
+// src/pages/ProjectDashboard.jsx
 
-const sampleProjects = [
-  { category: "Architecture", saving: 120000 },
-  { category: "Interior", saving: 95000 },
-  { category: "Structural", saving: 68000 },
-  { category: "Landscape", saving: 47000 }
-];
+import { Pie } from "react-chartjs-2";
+import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
+import ProjectTile from "../../components/ProjectTile";
+import { useNavigate } from "react-router-dom";
 
-const ProjectDashboard = () => {
-  const totalProjects = sampleProjects.length;
-  const totalSaving = sampleProjects.reduce((sum, p) => sum + p.saving, 0);
+Chart.register(ArcElement, Tooltip, Legend);
+
+export default function ProjectDashboard() {
+  const navigate = useNavigate();
+
+  const projects = [
+    { projectId: "P001", name: "New Outlet Jaffna", status: "ongoing" },
+    { projectId: "P002", name: "Outlet Renovation Colombo", status: "complete" },
+    { projectId: "P003", name: "Outlet Upgrade Galle", status: "hold" },
+  ];
+
+  const statusCounts = projects.reduce((acc, p) => {
+    acc[p.status] = (acc[p.status] || 0) + 1;
+    return acc;
+  }, {});
+
+  const data = {
+    labels: Object.keys(statusCounts),
+    datasets: [
+      {
+        label: "# of Projects",
+        data: Object.values(statusCounts),
+        backgroundColor: ["#3B82F6", "#10B981", "#F59E0B"],
+      },
+    ],
+  };
 
   return (
-    <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">Project Manager – Dashboard</h2>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-8">Project Dashboard</h1>
 
-      {/* 🧾 Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-blue-600 text-white p-4 rounded shadow">
-          <h3 className="text-sm font-semibold">Total Projects</h3>
-          <p className="text-xl font-bold">{totalProjects}</p>
-        </div>
-        <div className="bg-green-600 text-white p-4 rounded shadow">
-          <h3 className="text-sm font-semibold">Total Savings</h3>
-          <p className="text-xl font-bold">LKR {totalSaving.toLocaleString()}</p>
-        </div>
-        {/* Add more cards if needed */}
+      <div className="max-w-md mb-8">
+        <Pie data={data} />
       </div>
 
-      {/* 📊 Savings Chart */}
-      <div className="bg-white rounded shadow p-4">
-        <h3 className="font-semibold mb-3">Project Savings by Category</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={sampleProjects}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="category" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="saving" fill="#4f46e5" />
-          </BarChart>
-        </ResponsiveContainer>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((p) => (
+          <ProjectTile
+            key={p.projectId}
+            project={p}
+            onClick={() => navigate(`/project/${p.projectId}`)}
+          />
+        ))}
       </div>
     </div>
   );
-};
-
-export default ProjectDashboard;
+}

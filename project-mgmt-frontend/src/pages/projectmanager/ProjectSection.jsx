@@ -1,40 +1,60 @@
 import React, { useState, useEffect } from "react";
+import { createProject, getAllProjects } from "../../services/employeeApi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProjectSection = () => {
   const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     projectName: "",
     projectDescription: "",
     projectCategory: "",
     projectTargetBudget: "",
-    projectTargetDate: ""
+    projectTargetDate: "",
   });
 
-  // Hardcoded for now — replace with dynamic ID if needed
-  const managerId = 1;
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const fetchProjects = async () => {
-    try {
-      const res = await fetch("http://localhost:8080/api/projects");
-      const data = await res.json();
-      setProjects(data);
-    } catch (err) {
-      console.error("Failed to fetch projects:", err);
-    }
-  };
+  // Get managerId (empId) from localStorage as string
+  const managerId = localStorage.getItem("empId");
 
   useEffect(() => {
     fetchProjects();
   }, []);
 
+  const fetchProjects = async () => {
+    try {
+      const res = await getAllProjects();
+      setProjects(res.data);
+    } catch (err) {
+      console.error("Failed to load projects:", err);
+      toast.error("Failed to fetch projects.");
+    }
+  };
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleCreate = async () => {
+    if (
+      !form.projectName ||
+      !form.projectDescription ||
+      !form.projectCategory ||
+      !form.projectTargetBudget ||
+      !form.projectTargetDate
+    ) {
+      toast.error("Please fill all fields.");
+      return;
+    }
+
+    setLoading(true);
+
     const today = new Date().toISOString().split("T")[0];
 
-    const newProject = {
+    const payload = {
       projectName: form.projectName,
       projectDescription: form.projectDescription,
       projectCategory: form.projectCategory,
@@ -43,126 +63,140 @@ const ProjectSection = () => {
       projectStartDate: today,
       projectStatus: "Pending",
       projectEndDate: null,
-      projectSaving: 0.0,
-      feedback: ""
+      projectSaving: 0,
+      feedback: "",
+      manager: {
+        empId: managerId,
+      },
     };
 
     try {
-      const res = await fetch(
-        `http://localhost:8080/api/project-managers/${managerId}/projects`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(newProject)
-        }
-      );
+      const res = await createProject(payload);
+      setProjects((prev) => [...prev, res.data]);
+      toast.success("Project created!");
 
-      if (res.ok) {
-        const saved = await res.json();
-        setProjects((prev) => [...prev, saved]);
-        setForm({
-          projectName: "",
-          projectDescription: "",
-          projectCategory: "",
-          projectTargetBudget: "",
-          projectTargetDate: ""
-        });
-      } else {
-        console.error("Failed to save project:", res.status);
-      }
+      setForm({
+        projectName: "",
+        projectDescription: "",
+        projectCategory: "",
+        projectTargetBudget: "",
+        projectTargetDate: "",
+      });
     } catch (err) {
-      console.error("Failed to create project:", err);
+      console.error(err);
+      toast.error("Failed to create project.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">Project Manager – Projects</h2>
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <ToastContainer />
 
-      {/* ➕ Create Project Form */}
-      <div className="bg-white rounded shadow p-6 space-y-4">
-        <h3 className="text-lg font-semibold">Create New Project</h3>
+      <h2 className="text-2xl font-bold mb-4">Project Manager – Projects</h2>
 
-        {[
-          { label: "Project Name", name: "projectName" },
-          { label: "Project Description", name: "projectDescription", textarea: true },
-          { label: "Project Category", name: "projectCategory" },
-          { label: "Target Budget", name: "projectTargetBudget", type: "number" },
-          { label: "Target Date", name: "projectTargetDate", type: "date" }
-        ].map(({ label, name, textarea, type = "text" }) => (
-          <div key={name}>
-            <label className="block text-sm font-medium text-gray-700">{label}</label>
-            {textarea ? (
-              <textarea
-                name={name}
-                value={form[name]}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-              />
-            ) : (
-              <input
-                name={name}
-                type={type}
-                value={form[name]}
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-              />
-            )}
+      {/* Create Project Form */}
+      <div className="bg-white p-6 rounded shadow space-y-4">
+        <h3 className="text-lg font-semibold mb-2">Create New Project</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium">Project Name</label>
+            <input
+              type="text"
+              name="projectName"
+              value={form.projectName}
+              onChange={handleChange}
+              className="border w-full p-2 rounded"
+            />
           </div>
-        ))}
+
+          <div>
+            <label className="block text-sm font-medium">Category</label>
+            <input
+              type="text"
+              name="projectCategory"
+              value={form.projectCategory}
+              onChange={handleChange}
+              className="border w-full p-2 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Target Budget</label>
+            <input
+              type="number"
+              name="projectTargetBudget"
+              value={form.projectTargetBudget}
+              onChange={handleChange}
+              className="border w-full p-2 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Target Date</label>
+            <input
+              type="date"
+              name="projectTargetDate"
+              value={form.projectTargetDate}
+              onChange={handleChange}
+              className="border w-full p-2 rounded"
+            />
+          </div>
+
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-sm font-medium">Description</label>
+            <textarea
+              name="projectDescription"
+              value={form.projectDescription}
+              onChange={handleChange}
+              className="border w-full p-2 rounded"
+            ></textarea>
+          </div>
+        </div>
 
         <button
           onClick={handleCreate}
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+          disabled={loading}
+          className={`bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
-          Add Project
+          {loading ? "Creating..." : "Add Project"}
         </button>
       </div>
 
-      {/* 📋 View All Projects */}
-      <div className="bg-white rounded shadow p-4 overflow-x-auto">
-        <h3 className="font-semibold mb-3">
+      {/* Project List Table */}
+      <div className="bg-white p-6 rounded shadow mt-8">
+        <h3 className="text-lg font-semibold mb-4">
           All Projects ({projects.length})
         </h3>
-        <table className="w-full table-auto border text-sm">
+
+        <table className="min-w-full text-sm border">
           <thead className="bg-gray-100">
             <tr>
-              {[
-                "Name",
-                "Description",
-                "Category",
-                "Target Budget",
-                "Saving",
-                "Start Date",
-                "Target Date",
-                "End Date",
-                "Status"
-              ].map((col) => (
-                <th key={col} className="p-2 border">
-                  {col}
-                </th>
-              ))}
+              <th className="p-2 border">Name</th>
+              <th className="p-2 border">Category</th>
+              <th className="p-2 border">Target Budget</th>
+              <th className="p-2 border">Target Date</th>
+              <th className="p-2 border">Status</th>
             </tr>
           </thead>
           <tbody>
-            {projects.length > 0 ? (
-              projects.map((p, i) => (
-                <tr key={i}>
-                  <td className="p-2 border">{p.projectName}</td>
-                  <td className="p-2 border">{p.projectDescription}</td>
-                  <td className="p-2 border">{p.projectCategory}</td>
-                  <td className="p-2 border">{p.projectTargetBudget}</td>
-                  <td className="p-2 border">{p.projectSaving ?? "-"}</td>
-                  <td className="p-2 border">{p.projectStartDate}</td>
-                  <td className="p-2 border">{p.projectTargetDate}</td>
-                  <td className="p-2 border">{p.projectEndDate ?? "-"}</td>
-                  <td className="p-2 border">{p.projectStatus}</td>
-                </tr>
-              ))
-            ) : (
+            {projects.map((proj) => (
+              <tr key={proj.projectId}>
+                <td className="border p-2">{proj.projectName}</td>
+                <td className="border p-2">{proj.projectCategory}</td>
+                <td className="border p-2">{proj.projectTargetBudget}</td>
+                <td className="border p-2">{proj.projectTargetDate}</td>
+                <td className="border p-2">{proj.projectStatus}</td>
+              </tr>
+            ))}
+            {projects.length === 0 && (
               <tr>
-                <td colSpan="9" className="text-center text-gray-400 p-4">
-                  No projects found
+                <td colSpan={5} className="text-center p-4 text-gray-500">
+                  No projects found.
                 </td>
               </tr>
             )}

@@ -4,10 +4,9 @@ import { useEffect, user} from "react";
 
 export default function HomeContent() {
 
-  const userRole = "lawyer";
+  const role =localStorage.getItem("jobRole"); 
 
-
-  const tiles = userRolesConfig[userRole]?.tiles || [];
+  const tiles = userRolesConfig[role]?.tiles || [];
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {tiles.map((tile, index) => (
