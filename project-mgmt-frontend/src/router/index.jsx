@@ -32,6 +32,8 @@ import ProjectOverviewPage from "../pages/ProjectOverviewPage";
 import ProjectDashboardPage from "../pages/ProjectDashboardPage";
 import AssignTaskPage from "../pages/AssignTaskPage";
 import MyProposals from "../pages/propertyOfficer/MyProposals";
+import AllProposals from "../pages/propertymanager/AllProposals";
+import ProposalSummary from "../pages/propertymanager/ProposalSummary";
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -61,6 +63,8 @@ const AppRouter = () => (
 
         <Route path="propertyexecutive/manage-outlets" element={<PropertyExecutiveManageOutlets />} />
         <Route path="propertyexecutive/outlet-analysis" element={<PropertyExecutiveOutletAnalysis />} />
+         <Route path="propertymanager/proposals" element={<AllProposals />} />
+        <Route path="propertymanager/proposals-dashboard" element={<ProposalSummary />} />
 
         <Route path="civilengineer/task-logs" element={<TaskLogsPage />} />
 
@@ -72,7 +76,7 @@ const AppRouter = () => (
 
         <Route path="project-manager/report" element={<ProjectReport />} />
         <Route path="project-manager/project" element={<ProjectSection />} />
-
+ <Route path="project/:projectId" element={<ProjectDetails />} />
         <Route path="projects">
          <Route index element={<ProjectOverviewPage />} />
               <Route path=":projectId" element={<ProjectDashboardPage />} />
@@ -87,8 +91,7 @@ const AppRouter = () => (
 </Route>
       </Route>
 
-      {/* Standalone route outside HomeLayout */}
-      <Route path="project/:projectId" element={<ProjectDetails />} />
+     
 
       <Route path="*" element={<NotFound />} />
     </Routes>

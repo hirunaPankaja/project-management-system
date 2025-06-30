@@ -147,7 +147,7 @@ export const userRolesConfig = {
     ]
   },
 
-  propertymanager: {
+  property_manager: {
     tiles: [
       {
         name: "View Proposals",
@@ -204,7 +204,7 @@ export const userRolesConfig = {
     ]
   },
 
-  propertyexecutive: {
+  property_executive: {
     tiles: [
       {
         name: "Manage Outlets",
