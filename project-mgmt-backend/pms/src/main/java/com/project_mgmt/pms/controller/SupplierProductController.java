@@ -30,4 +30,10 @@ public class SupplierProductController {
     public List<SupplierProduct> viewProducts(@PathVariable Long supplierId) {
         return supplierProductService.viewProducts(supplierId);
     }
+
+    @DeleteMapping("/delete/{productId}")
+    public void deleteProduct(@PathVariable Long productId) {
+        supplierProductService.deleteProduct(productId);
+    }
+
 }

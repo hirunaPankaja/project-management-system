@@ -3,8 +3,17 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "../../components/ProductCard";
 import { Plus } from "lucide-react";
-import { addProducts, viewProducts } from "../../services/supplierApi";
+import {
+  addProducts,
+  viewProducts,
+  deleteProduct,
+  updateProduct,
+} from "../../services/supplierApi";
 import { toast } from "react-toastify";
+import Modal from "react-modal";
+
+// Set modal root for accessibility
+Modal.setAppElement("#root");
 
 export default function SupplierProductCatalog() {
   const [supplierId, setSupplierId] = useState(null);
@@ -19,6 +28,9 @@ export default function SupplierProductCatalog() {
     productImage: "",
   });
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
+
   useEffect(() => {
     const storedId = localStorage.getItem("supplierId");
     if (storedId) {
@@ -31,8 +43,7 @@ export default function SupplierProductCatalog() {
     try {
       const res = await viewProducts(id);
       setProducts(res.data);
-    } catch (err) {
-      console.error(err);
+    } catch {
       toast.error("Failed to fetch products.");
     }
   };
@@ -51,15 +62,11 @@ export default function SupplierProductCatalog() {
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result;
-        if (result) {
-          const base64 = result.includes(",")
-            ? result.split(",")[1]
-            : result;
-          setNewProduct((prev) => ({
-            ...prev,
-            productImage: base64,
-          }));
-        }
+        const base64 = result.includes(",") ? result.split(",")[1] : result;
+        setNewProduct((prev) => ({
+          ...prev,
+          productImage: base64,
+        }));
       };
       reader.readAsDataURL(file);
     }
@@ -86,25 +93,79 @@ export default function SupplierProductCatalog() {
         productImage: "",
       });
       fetchProducts(supplierId);
-    } catch (err) {
-      console.error(err);
+    } catch {
       toast.error("Failed to add product.");
     }
   };
 
   const handleEdit = (product) => {
-    // Implement edit logic here
-    console.log("Edit product:", product);
-    toast.info("Edit logic not yet implemented.");
+    setEditingProduct({ ...product, productImage: "" });
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditingProduct((prev) => ({
+      ...prev,
+      [name]: name === "productPrice" ? Number(value) : value,
+    }));
+  };
+
+  const handleEditImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result;
+        const base64 = result.includes(",") ? result.split(",")[1] : result;
+        setEditingProduct((prev) => ({
+          ...prev,
+          productImage: base64,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUpdateProduct = async () => {
+    try {
+      await updateProduct(editingProduct);
+      toast.success("Product updated successfully!");
+      setIsEditModalOpen(false);
+      fetchProducts(supplierId);
+    } catch {
+      toast.error("Failed to update product.");
+    }
+  };
+
+  const handleDelete = async (product) => {
+    if (
+      window.confirm(`Are you sure you want to delete "${product.productName}"?`)
+    ) {
+      try {
+        await deleteProduct(product.productId);
+        toast.success("Product deleted successfully!");
+        fetchProducts(supplierId);
+      } catch {
+        toast.error("Failed to delete product.");
+      }
+    }
   };
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Supplier Product Catalog</h2>
+      <h2 className="text-2xl font-bold mb-6 text-gray-800">
+        Supplier Product Catalog
+      </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         {products.map((product) => (
-          <ProductCard key={product.productId} product={product} onEdit={handleEdit} />
+          <ProductCard
+            key={product.productId}
+            product={product}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
         ))}
       </div>
 
@@ -163,6 +224,82 @@ export default function SupplierProductCatalog() {
           <Plus className="w-4 h-4 mr-2" /> Add
         </button>
       </div>
+
+      {/* Edit Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onRequestClose={() => setIsEditModalOpen(false)}
+        contentLabel="Edit Product"
+        className="bg-white p-6 rounded shadow max-w-xl mx-auto mt-24"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-start"
+      >
+        <h2 className="text-xl font-bold mb-4">Edit Product</h2>
+
+        {editingProduct && (
+          <div className="space-y-3">
+            <input
+              type="text"
+              name="productName"
+              placeholder="Name"
+              value={editingProduct.productName}
+              onChange={handleEditInputChange}
+              className="border px-3 py-2 rounded w-full"
+            />
+            <input
+              type="text"
+              name="productDescription"
+              placeholder="Description"
+              value={editingProduct.productDescription}
+              onChange={handleEditInputChange}
+              className="border px-3 py-2 rounded w-full"
+            />
+            <input
+              type="number"
+              name="productPrice"
+              placeholder="Price"
+              value={editingProduct.productPrice}
+              onChange={handleEditInputChange}
+              className="border px-3 py-2 rounded w-full"
+            />
+            <input
+              type="text"
+              name="sellingUnit"
+              placeholder="Unit"
+              value={editingProduct.sellingUnit}
+              onChange={handleEditInputChange}
+              className="border px-3 py-2 rounded w-full"
+            />
+            <input
+              type="text"
+              name="category"
+              placeholder="Category"
+              value={editingProduct.category}
+              onChange={handleEditInputChange}
+              className="border px-3 py-2 rounded w-full"
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleEditImageUpload}
+              className="border px-3 py-2 rounded w-full"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateProduct}
+                className="px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

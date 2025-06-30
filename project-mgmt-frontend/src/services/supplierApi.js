@@ -26,11 +26,12 @@ export const viewProducts = (supplierId) => {
   return axios.get(`${productAPI}/view/${supplierId}`);
 };
 
-// Optional: Add these if needed
-export const updateProduct = (productId, productData) => {
-  return axios.put(`${productAPI}/update/${productId}`, productData);
+// ✅ FIXED: Correct update method (send full object in body, not URL)
+export const updateProduct = (productData) => {
+  return axios.put(`${productAPI}/update`, productData);
 };
 
+// Delete by ID (still fine)
 export const deleteProduct = (productId) => {
   return axios.delete(`${productAPI}/delete/${productId}`);
 };

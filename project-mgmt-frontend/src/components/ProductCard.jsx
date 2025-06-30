@@ -1,8 +1,6 @@
-// src/components/ProductCard.jsx
+import { Pencil, Trash2 } from "lucide-react";
 
-import { Pencil } from "lucide-react";
-
-export default function ProductCard({ product, onEdit }) {
+export default function ProductCard({ product, onEdit, onDelete }) {
   const imageUrl = product.productImage
     ? `data:image/png;base64,${product.productImage}`
     : "https://via.placeholder.com/150";
@@ -30,6 +28,12 @@ export default function ProductCard({ product, onEdit }) {
           className="flex items-center px-3 py-1.5 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
         >
           <Pencil className="w-4 h-4 mr-1" /> Edit
+        </button>
+        <button
+          onClick={() => onDelete(product)}
+          className="flex items-center px-3 py-1.5 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+        >
+          <Trash2 className="w-4 h-4 mr-1" /> Delete
         </button>
       </div>
     </div>

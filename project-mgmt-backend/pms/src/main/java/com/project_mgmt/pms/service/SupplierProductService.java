@@ -80,4 +80,11 @@ public class SupplierProductService {
     public List<SupplierProduct> viewProducts(Long supplierId) {
         return supplierProductRepository.findBySupplierId(supplierId);
     }
+
+    public void deleteProduct(Long productId) {
+        SupplierProduct product = supplierProductRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        supplierProductRepository.delete(product);
+    }
+
 }
