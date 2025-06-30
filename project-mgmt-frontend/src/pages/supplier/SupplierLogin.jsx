@@ -1,28 +1,51 @@
 // src/components/Login.jsx
 import React, { useState } from "react";
 import { loginUser } from "../../services/supplierApi";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
+    if (!email || !password) {
+      toast.error("Please fill in all fields.");
+      setIsLoading(false);
+      return;
+    }
+
+    if (!email.includes("@")) {
+      toast.error("Please enter a valid email address.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const res = await loginUser({ email, password });
-      const supplierId = res.data;
-      console.log("Supplier ID:", supplierId);
+
+      // Assuming response contains supplierId and maybe supplierName
+      const { supplierId, supplierName } = res.data;
+
       localStorage.setItem("supplierId", supplierId);
-      toast.success('Login successful! Redirecting...');
+      if (supplierName) localStorage.setItem("supplierName", supplierName);
+
+      toast.success("Login successful! Redirecting...");
       setTimeout(() => {
-        navigate('/home/supplier/supplier-dashboard');
+        navigate("/home/supplier/supplier-dashboard");
       }, 1500);
     } catch (error) {
-      toast.error('Login Failed!');
+      console.error("Login error:", error);
+      toast.error(error.response?.data?.message || "Login Failed!");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -59,14 +82,16 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition duration-300"
+            disabled={isLoading}
+            className={`w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition duration-300 ${
+              isLoading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <ToastContainer />
-
+        <ToastContainer position="top-right" autoClose={5000} />
       </div>
     </div>
   );

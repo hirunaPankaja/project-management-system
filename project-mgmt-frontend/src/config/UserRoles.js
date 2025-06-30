@@ -107,6 +107,11 @@ export const userRolesConfig = {
         icon: HardHat,
         color: "bg-teal-600",
         path: "designer/projects"
+      },  {
+        name: "Map",
+        icon: Map,
+        color: "bg-blue-500",
+        path: "map"
       }
     ],
     nav: [
@@ -124,6 +129,11 @@ export const userRolesConfig = {
         label: "Drafts",
         path: "designer/drafts",
         icon: FileText
+      },
+       {
+        label: "Map",
+        path: "map",
+        icon: Map
       }
     ]
   },
@@ -135,6 +145,12 @@ export const userRolesConfig = {
         icon: FileText,
         color: "bg-green-600",
         path: "propertyofficer/proposal"
+      },
+        {
+        name: "Map",
+        icon: Map,
+        color: "bg-blue-500",
+        path: "map"
       }
     ],
     nav: [
@@ -142,6 +158,11 @@ export const userRolesConfig = {
         label: "Proposals",
         path: "propertyofficer/proposal",
         icon: FileText
+      },
+       {
+        label: "Map",
+        path: "map",
+        icon: Map
       }
     
     ]
@@ -160,6 +181,12 @@ export const userRolesConfig = {
         icon: Eye,
         color: "bg-blue-600",
         path: "propertymanager/proposals-dashboard"
+      },
+        {
+        name: "Map",
+        icon: Map,
+        color: "bg-blue-500",
+        path: "map"
       }
     ],
     nav: [
@@ -171,6 +198,11 @@ export const userRolesConfig = {
         label: "Proposals",
         path: "propertymanager/proposals",
         icon: FileText
+      },
+       {
+        label: "Map",
+        path: "map",
+        icon: Map
       }
     ]
   },
@@ -217,6 +249,12 @@ export const userRolesConfig = {
         icon: FileBarChart2,
         color: "bg-purple-600",
         path: "propertyexecutive/outlet-analysis"
+      },
+        {
+        name: "Map",
+        icon: Map,
+        color: "bg-blue-500",
+        path: "map"
       }
     ],
     nav: [
@@ -229,6 +267,11 @@ export const userRolesConfig = {
         label: "Outlet Analysis",
         path: "propertyexecutive/outlet-analysis",
         icon: FileBarChart2
+      },
+       {
+        label: "Map",
+        path: "map",
+        icon: Map
       }
     ]
   },
@@ -246,6 +289,12 @@ export const userRolesConfig = {
         icon: Map,
         color: "bg-blue-500",
         path: "map"
+      },
+        {
+        name: "Map",
+        icon: Map,
+        color: "bg-blue-500",
+        path: "map"
       }
     ],
     nav: [
@@ -255,6 +304,11 @@ export const userRolesConfig = {
         icon: ClipboardList
       },
       {
+        label: "Map",
+        path: "map",
+        icon: Map
+      },
+       {
         label: "Map",
         path: "map",
         icon: Map
@@ -269,6 +323,12 @@ export const userRolesConfig = {
         icon: CalendarClock,
         color: "bg-indigo-600",
         path: "managemeetings"
+      },
+        {
+        name: "Map",
+        icon: Map,
+        color: "bg-blue-500",
+        path: "map"
       }
     ],
     nav: [
@@ -276,6 +336,10 @@ export const userRolesConfig = {
         label: "Meetings",
         path: "managemeetings",
         icon: CalendarClock
+      }, {
+        label: "Map",
+        path: "map",
+        icon: Map
       }
     ]
   },
@@ -305,6 +369,12 @@ export const userRolesConfig = {
         icon: FileBarChart2,
         color: "bg-green-600",
         path: "project-manager/report"
+      },
+        {
+        name: "Map",
+        icon: Map,
+        color: "bg-blue-500",
+        path: "map"
       }
     ],
     nav: [
@@ -327,6 +397,11 @@ export const userRolesConfig = {
         label: "Report",
         path: "project-manager/report",
         icon: FileBarChart2
+      },
+       {
+        label: "Map",
+        path: "map",
+        icon: Map
       }
     ]
   },
@@ -349,6 +424,12 @@ export const userRolesConfig = {
         icon: CalendarClock,
         color: "bg-indigo-600",
         path: "managemeetings"
+      },
+        {
+        name: "Map",
+        icon: Map,
+        color: "bg-blue-500",
+        path: "map"
       },
       {
         name: "Report",
@@ -377,6 +458,10 @@ export const userRolesConfig = {
         label: "Report",
         path: "project-manager/report",
         icon: FileBarChart2
+      }, {
+        label: "Map",
+        path: "map",
+        icon: Map
       }
     ]
   }
