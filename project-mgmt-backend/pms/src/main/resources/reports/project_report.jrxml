@@ -14,10 +14,10 @@
 
     <!-- Styles -->
     <style name="titleStyle" isBold="true" fontSize="20" forecolor="#000000" hAlign="Center"/>
-    <style name="sectionHeaderStyle" isBold="true" fontSize="14" forecolor="#000000"/>
+    <style name="sectionHeaderStyle" isBold="true" fontSize="14" forecolor="#1E88E5"/> <!-- blue -->
     <style name="labelStyle" isBold="true" fontSize="11" forecolor="#000000"/>
     <style name="valueStyle" isBold="false" fontSize="11" forecolor="#000000"/>
-    <style name="highlightValueStyle" isBold="true" fontSize="13" forecolor="#000000"/>
+    <style name="highlightValueStyle" isBold="true" fontSize="13" forecolor="#1E88E5"/>
     <style name="descStyle" fontSize="10" forecolor="#333333"/>
     <style name="footerStyle" fontSize="10" forecolor="#666666" hAlign="Right"/>
 
@@ -48,7 +48,7 @@
 
     <!-- Title -->
     <title>
-        <band height="120">
+        <band height="130">
             <image>
                 <reportElement x="0" y="0" width="50" height="50"/>
                 <imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
@@ -59,24 +59,24 @@
             </staticText>
 
             <line>
-                <reportElement x="0" y="45" width="555" height="1" forecolor="#CCCCCC"/>
+                <reportElement x="0" y="55" width="555" height="1" forecolor="#CCCCCC"/>
             </line>
 
             <staticText>
-                <reportElement x="0" y="60" width="100" height="20" style="labelStyle"/>
+                <reportElement x="0" y="65" width="100" height="20" style="labelStyle"/>
                 <text><![CDATA[Project Name:]]></text>
             </staticText>
             <textField>
-                <reportElement x="110" y="60" width="445" height="20" style="highlightValueStyle"/>
+                <reportElement x="110" y="65" width="445" height="20" style="highlightValueStyle"/>
                 <textFieldExpression><![CDATA[$P{projectName}]]></textFieldExpression>
             </textField>
 
             <staticText>
-                <reportElement x="0" y="85" width="100" height="20" style="labelStyle"/>
+                <reportElement x="0" y="90" width="100" height="20" style="labelStyle"/>
                 <text><![CDATA[Description:]]></text>
             </staticText>
             <textField>
-                <reportElement x="110" y="85" width="445" height="20" style="descStyle"/>
+                <reportElement x="110" y="90" width="445" height="20" style="descStyle"/>
                 <textFieldExpression><![CDATA[$P{projectDescription}]]></textFieldExpression>
             </textField>
         </band>
@@ -129,7 +129,7 @@
 
     <!-- Detail -->
     <detail>
-        <band height="200" splitType="Stretch">
+        <band height="210" splitType="Stretch">
             <line>
                 <reportElement x="0" y="0" width="555" height="1" forecolor="#CCCCCC"/>
             </line>

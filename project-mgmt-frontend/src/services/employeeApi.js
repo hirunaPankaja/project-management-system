@@ -132,3 +132,8 @@ export const proposeLocation = (proposerId, proposal, location) => {
     }
   );
 };
+export const downloadProjectReport = async (projectId) => {
+  return axios.get(`http://localhost:8082/api/reports/project/${projectId}`, {
+    responseType: "blob", 
+  });
+};

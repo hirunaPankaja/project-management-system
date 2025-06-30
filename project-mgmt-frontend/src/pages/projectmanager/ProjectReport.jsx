@@ -1,102 +1,51 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
+import { downloadProjectReport } from "../../services/employeeApi";
 
-const ProjectReport = () => {
-  const [projects, setProjects] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+export default function DownloadProjectReport() {
+  const [projectId, setProjectId] = useState("");
 
-  // Fetch real project data on mount
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const res = await fetch("http://localhost:8080/api/projects");
-        const data = await res.json();
-        setProjects(data);
-      } catch (err) {
-        console.error("Failed to fetch projects:", err);
-      }
-    };
+  const handleDownload = async () => {
+    if (!projectId) {
+      alert("Please enter a Project ID!");
+      return;
+    }
 
-    fetchProjects();
-  }, []);
+    try {
+      const response = await downloadProjectReport(projectId);
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"],
+      });
+      const url = window.URL.createObjectURL(blob);
 
-  const filteredProjects = projects.filter((p) =>
-    p.projectName?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleGenerate = () => {
-    alert("🧾 Report generated for " + (searchQuery || "all projects"));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `project_${projectId}_report.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Failed to download report", error);
+      alert("Error downloading report. Check the Project ID or server.");
+    }
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">Project Report</h2>
-
-      {/* 🔍 Search Bar */}
-      <div className="flex gap-4 items-end">
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700">Search Project</label>
-          <input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Enter project name"
-            className="w-full border p-2 rounded"
-          />
-        </div>
-        <button
-          onClick={handleGenerate}
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-        >
-          Generate Report
-        </button>
-      </div>
-
-      {/* 📋 Filtered Project List */}
-      <div className="bg-white rounded shadow p-4 overflow-x-auto">
-        <table className="w-full table-auto border text-sm">
-          <thead className="bg-gray-100">
-            <tr>
-              {[
-                "Project",
-                "Description",
-                "Category",
-                "Budget",
-                "Saving",
-                "Start",
-                "Target",
-                "End",
-                "Status"
-              ].map((header) => (
-                <th key={header} className="p-2 border">{header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredProjects.length > 0 ? (
-              filteredProjects.map((p, i) => (
-                <tr key={i}>
-                  <td className="p-2 border">{p.projectName}</td>
-                  <td className="p-2 border">{p.projectDescription}</td>
-                  <td className="p-2 border">{p.projectCategory}</td>
-                  <td className="p-2 border">{p.projectTargetBudget}</td>
-                  <td className="p-2 border">{p.projectSaving ?? "-"}</td>
-                  <td className="p-2 border">{p.projectStartDate}</td>
-                  <td className="p-2 border">{p.projectTargetDate}</td>
-                  <td className="p-2 border">{p.projectEndDate || "-"}</td>
-                  <td className="p-2 border">{p.projectStatus}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="9" className="text-center text-gray-400 p-4">
-                  No matching projects
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+    <div className="p-4 max-w-md mx-auto">
+      <h2 className="text-xl font-bold mb-4">Download Project Report</h2>
+      <input
+        type="text"
+        placeholder="Enter Project ID"
+        value={projectId}
+        onChange={(e) => setProjectId(e.target.value)}
+        className="border p-2 w-full mb-4"
+      />
+      <button
+        onClick={handleDownload}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Download Report
+      </button>
     </div>
   );
-};
-
-export default ProjectReport;
+}
