@@ -12,10 +12,10 @@ import SupplierProductCatalog from "../pages/supplier/ProductCatalog";
 import PropertyOfficerProposal from "../pages/propertyOfficer/PropertyOfficerProposal";
 import PropertyOfficerFeedback from "../pages/propertyOfficer/PropertyOfficerFeedback";
 import Map from "../pages/Map";
-import PropertyManagerViewProposals from "../pages/propertymanager/PropertyManagerProposals";
+import PropertyManagerViewProposals from "../pages/propertymanager/AllProposals";
 import LawyerVerifyProposals from "../pages/lawyer/LawyerVerifyProposals";
-import PropertyExecutiveManageOutlets from "../pages/propertyExective/PropertyExecutiveManageOutlets";
-import PropertyExecutiveOutletAnalysis from "../pages/propertyExective/PropertyExecutiveOutletAnalysis";
+import PropertyExecutiveManageOutlets from "../pages/propertyExective/AllOutlets";
+import PropertyExecutiveOutletAnalysis from "../pages/propertyExective/OutletAnalysis";
 import Contracts from "../pages/supplier/Contracts";
 import SupplierDashboard from "../pages/supplier/SupplierDashboard";
 import SupplierLogin from "../pages/supplier/SupplierLogin";
@@ -31,6 +31,7 @@ import ProjectSection from "../pages/projectmanager/ProjectSection";
 import ProjectOverviewPage from "../pages/ProjectOverviewPage";
 import ProjectDashboardPage from "../pages/ProjectDashboardPage";
 import AssignTaskPage from "../pages/AssignTaskPage";
+import MyProposals from "../pages/propertyOfficer/MyProposals";
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -50,7 +51,7 @@ const AppRouter = () => (
         <Route path="supplier/product-catalog" element={<SupplierProductCatalog />} />
         <Route path="supplier/contracts" element={<Contracts />} />
 
-        <Route path="propertyofficer/proposal" element={<PropertyOfficerProposal />} />
+        <Route path="propertyofficer/proposal" element={<MyProposals />} />
         <Route path="propertyofficer/feedback" element={<PropertyOfficerFeedback />} />
         <Route path="map" element={<Map />} />
 

@@ -39,4 +39,8 @@ public class Task {
     @OneToOne
     @JoinColumn(name = "architecturer_id", referencedColumnName = "empId")
     private Employee architecturer;
+
+    @OneToOne
+    @JoinColumn(name = "civil_engineer_id", referencedColumnName = "empId")
+    private Employee civilEngineer;
 }

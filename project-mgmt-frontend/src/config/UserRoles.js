@@ -135,12 +135,6 @@ export const userRolesConfig = {
         icon: FileText,
         color: "bg-green-600",
         path: "propertyofficer/proposal"
-      },
-      {
-        name: "View Feedback",
-        icon: MessageSquare,
-        color: "bg-yellow-400",
-        path: "propertyofficer/feedback"
       }
     ],
     nav: [
@@ -148,12 +142,8 @@ export const userRolesConfig = {
         label: "Proposals",
         path: "propertyofficer/proposal",
         icon: FileText
-      },
-      {
-        label: "Feedback",
-        path: "propertyofficer/feedback",
-        icon: MessageSquare
       }
+    
     ]
   },
 
@@ -163,13 +153,23 @@ export const userRolesConfig = {
         name: "View Proposals",
         icon: Eye,
         color: "bg-blue-600",
-        path: "propertymanager/view-proposals"
+        path: "propertymanager/proposals"
+      },
+       {
+        name: "Proposals Dashboard",
+        icon: Eye,
+        color: "bg-blue-600",
+        path: "propertymanager/proposals-dashboard"
       }
     ],
     nav: [
       {
-        label: "View Proposals",
-        path: "propertymanager/view-proposals",
+        label: "Proposals Dashboard",
+        path: "propertymanager/proposals-dashboard",
+        icon: FileText
+      },  {
+        label: "Proposals",
+        path: "propertymanager/proposals",
         icon: FileText
       }
     ]

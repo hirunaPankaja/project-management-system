@@ -39,6 +39,8 @@ public class EmployeeService {
     private MeetingRepository meetingRepository;
     @Autowired
     private ProjectManagerRepository projectManagerRepository;
+    @Autowired
+    private AdminRepository adminRepository;
 
    //log in
    public Map<String, String> login(String email, String password, String jobRole) {
@@ -64,6 +66,7 @@ public class EmployeeService {
            case "property_manager" -> propertyManagerRepository.existsById(empId);
            case "property_executive" -> propertyExecutiveRepository.existsById(empId);
            case "project_manager" -> projectManagerRepository.existsById(empId);
+           case "admin" -> adminRepository.existsById(empId);
            default -> false;
        };
 

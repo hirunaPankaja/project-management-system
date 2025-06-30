@@ -78,3 +78,52 @@ export const getDesignerEmployeeSummaries = () => {
 export const getProjectDashboard = (projectId) => {
   return axios.get(`${empInfoAPI}/projects/dash/${projectId}`);
 };
+
+export const getLocationsWithNestedData = () => {
+  return axios.get(`${empInfoAPI}/api/location/displayOnMap`);
+};
+
+
+export const getAllProposals = () => {
+  return axios.get(`${empInfoAPI}/api/proposal/all`);
+};
+
+export const filterProposalsByProposer = (empId) => {
+  return axios.get(`${empInfoAPI}/api/proposal/filterByProposer/${empId}`);
+};
+
+export const updateProposalStatus = (proposalId, newStatus) => {
+  return axios.put(
+    `${empInfoAPI}/api/proposal/updateStatus/${proposalId}`,
+    null,
+    {
+      params: {
+        newStatus,
+      },
+    }
+  );
+};
+
+export const getProposalSummary = () => {
+  return axios.get(`${empInfoAPI}/api/proposal/summary`);
+};
+
+export const proposeLocation = (proposerId, proposal, location) => {
+  return axios.post(
+    `${empInfoAPI}/api/proposal/proposeLocation/${proposerId}`,
+    { ...proposal, location }
+  );
+};
+
+
+export const getAllOutlets = () => {
+  return axios.get(`${empInfoAPI}/api/outlet/all`);
+};
+
+export const getOutletAnalysis = () => {
+  return axios.get(`${empInfoAPI}/api/outlet/analysis`);
+};
+
+export const getOutletById = (outletId) => {
+  return axios.get(`${empInfoAPI}/api/outlet/${outletId}`);
+};
