@@ -2,6 +2,7 @@ package com.project_mgmt.pms.controller;
 
 import com.project_mgmt.pms.data.Location;
 import com.project_mgmt.pms.data.Proposal;
+import com.project_mgmt.pms.dto.ProposalLocationRequest;
 import com.project_mgmt.pms.service.ProposalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/proposal")
 @RequiredArgsConstructor
+@CrossOrigin
 public class ProposalController {
 
     private final ProposalService proposalService;
@@ -43,9 +45,12 @@ public class ProposalController {
 
     @PostMapping("/proposeLocation/{proposerId}")
     public ResponseEntity<Proposal> proposeLocation(
-            @RequestBody Proposal proposal,
-            @RequestBody Location location,
+            @RequestBody ProposalLocationRequest request,
             @PathVariable String proposerId) {
+
+        Proposal proposal = request.getProposal();
+        Location location = request.getLocation();
+
         Proposal savedProposal = proposalService.proposeLocation(location, proposal, proposerId);
         return ResponseEntity.ok(savedProposal);
     }

@@ -128,7 +128,7 @@ export const userRolesConfig = {
     ]
   },
 
-  propertyofficer: {
+  property_officer: {
     tiles: [
       {
         name: "Proposal",

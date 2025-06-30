@@ -1,4 +1,4 @@
-// src/services/supplierApi.js
+// src/services/employeeApi.js
 import axios from "axios";
 
 const empInfoAPI = "http://localhost:8082";
@@ -108,12 +108,7 @@ export const getProposalSummary = () => {
   return axios.get(`${empInfoAPI}/api/proposal/summary`);
 };
 
-export const proposeLocation = (proposerId, proposal, location) => {
-  return axios.post(
-    `${empInfoAPI}/api/proposal/proposeLocation/${proposerId}`,
-    { ...proposal, location }
-  );
-};
+
 
 
 export const getAllOutlets = () => {
@@ -126,4 +121,14 @@ export const getOutletAnalysis = () => {
 
 export const getOutletById = (outletId) => {
   return axios.get(`${empInfoAPI}/api/outlet/${outletId}`);
+};
+
+export const proposeLocation = (proposerId, proposal, location) => {
+  return axios.post(
+    `${empInfoAPI}/api/proposal/proposeLocation/${proposerId}`,
+    { 
+      proposal,
+      location
+    }
+  );
 };
