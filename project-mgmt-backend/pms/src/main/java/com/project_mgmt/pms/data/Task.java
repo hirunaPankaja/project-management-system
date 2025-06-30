@@ -37,6 +37,7 @@ public class Task {
     private Employee designer;
 
     @OneToOne
+
     @JoinColumn(name = "architecturer_id", referencedColumnName = "empId")
     private Employee architecturer;
 

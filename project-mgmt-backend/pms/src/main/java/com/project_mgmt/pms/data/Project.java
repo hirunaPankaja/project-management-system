@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 import lombok.*;
@@ -36,5 +37,8 @@ public class Project {
     @ManyToOne
     @JoinColumn(name = "manager_id", referencedColumnName = "empId")
     private Employee manager;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Task> tasks;
 
 }
