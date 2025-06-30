@@ -71,7 +71,7 @@ export const userRolesConfig = {
     ],
     nav: [
       {
-        label: "Supplier Registration",
+        label: "Supplier Dashboard",
         path: "supplier/supplier-dashboard",
         icon: Hammer
       },
@@ -151,6 +151,13 @@ export const userRolesConfig = {
         icon: Map,
         color: "bg-blue-500",
         path: "map"
+      }
+      ,
+         {
+        name: "View Feedback",
+        icon: Map,
+        color: "bg-blue-500",
+        path: "propertyofficer/feedback"
       }
     ],
     nav: [

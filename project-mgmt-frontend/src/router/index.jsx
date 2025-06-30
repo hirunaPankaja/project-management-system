@@ -18,7 +18,7 @@ import PropertyExecutiveManageOutlets from "../pages/propertyExective/AllOutlets
 import PropertyExecutiveOutletAnalysis from "../pages/propertyExective/OutletAnalysis";
 import Contracts from "../pages/supplier/Contracts";
 import SupplierDashboard from "../pages/supplier/SupplierDashboard";
-import SupplierLogin from "../pages/supplier/SupplierLogin";
+import SupplierLogin from "../pages/supplier/Login";
 import TaskLogsPage from "../pages/civilengineer/TaskLogsPage";
 import ManageMeeting from "../pages/ManageMeetingsPage";
 import ProjectManagerProjects from "../pages/projectmanager/ProjectSection";
