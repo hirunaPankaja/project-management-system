@@ -42,7 +42,32 @@ public class TaskService {
 
         taskRepository.save(task);
     }
-    public void updateTask(Task task){
-        return
+
+        public void updateTask(Task task) {
+            if (task == null || task.getTaskId() == 0) {
+                throw new IllegalArgumentException("Task ID is required for update.");
+            }
+
+
+            Task existing = taskRepository.findById(task.getTaskId())
+                    .orElseThrow(() -> new IllegalArgumentException("Task not found."));
+
+            // Update fields
+            existing.setTaskTitle(task.getTaskTitle());
+            existing.setTaskDescription(task.getTaskDescription());
+            existing.setTaskStatus(task.getTaskStatus());
+            existing.setTaskSaving(task.getTaskSaving());
+            existing.setDueDate(task.getDueDate());
+            existing.setTaskStartDate(task.getTaskStartDate());
+            existing.setTaskExpectedBudget(task.getTaskExpectedBudget());
+            existing.setTaskExpendBudget(task.getTaskExpendBudget());
+            existing.setCompleteDate(task.getCompleteDate());
+            existing.setDesigner(task.getDesigner());
+            existing.setArchitecturer(task.getArchitecturer());
+            existing.setProject(task.getProject());
+
+            taskRepository.save(existing);
+        }
     }
-}
+
+

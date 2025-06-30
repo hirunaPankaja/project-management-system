@@ -21,7 +21,7 @@ public class ProjectController {
         this.service = service;
     }
 
-    @GetMapping("/{projectId}")
+    @GetMapping("/dash/{projectId}")
     public ResponseEntity<ProjectDashboardDTO> getDashboard(@PathVariable Long projectId) {
         ProjectDashboardDTO dto = service.getProjectDashboard(projectId);
         return ResponseEntity.ok(dto);

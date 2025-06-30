@@ -32,11 +32,11 @@ public class Task {
     @JoinColumn(name = "project_id", referencedColumnName = "projectId")
     private Project project;
 
-    @OneToMany
+    @OneToOne
     @JoinColumn(name = "designer_id", referencedColumnName = "empId")
     private Employee designer;
 
-    @OneToMany
+    @OneToOne
     @JoinColumn(name = "architecturer_id", referencedColumnName = "empId")
     private Employee architecturer;
 }

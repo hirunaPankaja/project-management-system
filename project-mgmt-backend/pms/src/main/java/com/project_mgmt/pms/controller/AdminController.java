@@ -2,11 +2,13 @@ package com.project_mgmt.pms.controller;
 
 import com.project_mgmt.pms.data.Employee;
 import com.project_mgmt.pms.dto.EmployeeRegistrationRequest;
+import com.project_mgmt.pms.dto.EmployeeSearch;
 import com.project_mgmt.pms.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,6 +26,11 @@ public class AdminController {
         return ResponseEntity.ok(savedEmployee);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<EmployeeSearch>> getAllEmployeeSummaries() {
+        List<EmployeeSearch> employees = adminService.getEmployees(new EmployeeSearch());
+        return ResponseEntity.ok(employees);
+    }
     //get employee
     @GetMapping("/{empId}")
     public ResponseEntity<Employee> getEmployee(@PathVariable String empId) {

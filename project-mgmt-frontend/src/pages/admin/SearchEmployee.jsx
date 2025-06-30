@@ -1,261 +1,232 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
+import {
+  searchEmployee,
+  getEmployeeById,
+  deleteEmployeeById
+} from "../../services/employeeApi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {Edit,Delete}from "lucide-react";
 
 function SearchEmployee() {
-  const [searchType, setSearchType] = useState('name');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [employee, setEmployee] = useState(null);
+  const [employees, setEmployees] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState({});
+  const [editData, setEditData] = useState(null);
 
-  // Mock employee data - replace with API calls
-  const mockEmployees = [
-    {
-      id: 'EMP001',
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      position: 'Software Engineer',
-      profilePic: 'https://randomuser.me/api/portraits/men/1.jpg',
-      address: '123 Main St, Colombo',
-      phone: '+94123456789',
-      nic: '123456789V',
-      joinDate: '2020-01-15'
-    },
-    // Add more mock employees as needed
-  ];
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    // In a real app, you would make an API call here
-    const foundEmployee = mockEmployees.find(emp => 
-      searchType === 'id' 
-        ? emp.id.toLowerCase() === searchQuery.toLowerCase()
-        : emp.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setEmployee(foundEmployee);
-    if (foundEmployee) {
-      setEditData({ ...foundEmployee });
+  const fetchEmployees = async () => {
+    try {
+      const res = await searchEmployee();
+      setEmployees(res.data);
+      setFilteredEmployees(res.data);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch employees.");
     }
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    const lower = e.target.value.toLowerCase();
+
+    const filtered = employees.filter(emp =>
+      emp.firstName.toLowerCase().includes(lower) ||
+      emp.lastName.toLowerCase().includes(lower) ||
+      emp.empId.toLowerCase().includes(lower)
+    );
+
+    setFilteredEmployees(filtered);
+  };
+
+  const handleEditClick = async (empId) => {
+    try {
+      const res = await getEmployeeById(empId);
+      setEditData(res.data);
+      setIsEditing(true);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch employee details.");
+    }
+  };
+
+  const handleDelete = async (empId) => {
+    if (!window.confirm("Are you sure you want to delete this employee?")) {
+      return;
+    }
+
+    try {
+      await deleteEmployeeById(empId);
+      toast.success("Employee deleted.");
+      setEmployees((prev) => prev.filter((e) => e.empId !== empId));
+      setFilteredEmployees((prev) => prev.filter((e) => e.empId !== empId));
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete employee.");
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSave = () => {
-    // Here you would typically make an API call to save changes
-    console.log('Saving:', editData);
-    setEmployee(editData);
+    console.log("Saving:", editData);
+    // You can implement PUT request here
     setIsEditing(false);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    setEditData(employee);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditData(prev => ({ ...prev, [name]: value }));
   };
 
   return (
     <div className="p-6">
+      <ToastContainer />
       <h1 className="text-2xl font-bold mb-6">Search Employee</h1>
-      
-      <div className="bg-white p-6 rounded-lg shadow mb-6">
-        <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
-          <div className="flex items-center space-x-4">
-            <label className="flex items-center">
-              <input
-                type="radio"
-                checked={searchType === 'name'}
-                onChange={() => setSearchType('name')}
-                className="mr-2"
-              />
-              By Name
-            </label>
-            <label className="flex items-center">
-              <input
-                type="radio"
-                checked={searchType === 'id'}
-                onChange={() => setSearchType('id')}
-                className="mr-2"
-              />
-              By ID
-            </label>
-          </div>
-          
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={searchType === 'name' ? 'Enter employee name' : 'Enter employee ID'}
-            className="flex-1 rounded-md border-gray-300 shadow-sm"
-            required
-          />
-          
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Search
-          </button>
-        </form>
+
+      {/* Search box */}
+      <input
+        type="text"
+        value={searchQuery}
+        onChange={handleSearch}
+        placeholder="Search by name or ID..."
+        className="mb-4 p-2 border rounded w-full"
+      />
+
+      {/* Table of employees */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full border text-sm">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border p-2">Employee ID</th>
+              <th className="border p-2">First Name</th>
+              <th className="border p-2">Last Name</th>
+              <th className="border p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredEmployees.map((emp) => (
+              <tr key={emp.empId}>
+                <td className="border p-2">{emp.empId}</td>
+                <td className="border p-2">{emp.firstName}</td>
+                <td className="border p-2">{emp.lastName}</td>
+                <td className="border p-2 flex space-x-2">
+                  <button
+                    onClick={() => handleEditClick(emp.empId)}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    <Edit />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(emp.empId)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <Delete />
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {filteredEmployees.length === 0 && (
+              <tr>
+                <td
+                  className="text-center text-gray-500 p-4"
+                  colSpan={4}
+                >
+                  No employees found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
 
-      {employee ? (
-        <div className="bg-white p-6 rounded-lg shadow">
-          {isEditing ? (
+      {/* Edit popup */}
+      {isEditing && editData && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded shadow max-w-xl w-full">
+            <h2 className="text-xl font-bold mb-4">Edit Employee</h2>
+
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold mb-4">Edit Employee</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium">Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={editData.name}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={editData.email}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium">Position</label>
-                  <input
-                    type="text"
-                    name="position"
-                    value={editData.position}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium">Phone</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={editData.phone}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                  />
-                </div>
-                
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium">Address</label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={editData.address}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium">NIC</label>
-                  <input
-                    type="text"
-                    name="nic"
-                    value={editData.nic}
-                    onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                  />
-                </div>
-              </div>
-              
-              <div className="flex justify-end space-x-4 mt-6">
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="px-4 py-2 border border-gray-300 rounded"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col md:flex-row gap-6">
-              <div className="flex-shrink-0">
-                <img 
-                  src={employee.profilePic} 
-                  alt="Profile" 
-                  className="w-32 h-32 rounded-full object-cover border-4 border-blue-100"
+              <div>
+                <label className="block text-sm font-medium">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={editData.firstName}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
                 />
               </div>
-              
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h2 className="text-xl font-bold">{employee.name}</h2>
-                    <p className="text-blue-600">{employee.position}</p>
-                  </div>
-                  <button
-                    onClick={handleEdit}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                  >
-                    Edit
-                  </button>
-                </div>
-                
-                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Employee ID</p>
-                    <p>{employee.id}</p>
-                  </div>
-                  
-                  <div>
-                    <p className="text-sm text-gray-500">Email</p>
-                    <p>{employee.email}</p>
-                  </div>
-                  
-                  <div>
-                    <p className="text-sm text-gray-500">Phone</p>
-                    <p>{employee.phone}</p>
-                  </div>
-                  
-                  <div>
-                    <p className="text-sm text-gray-500">NIC</p>
-                    <p>{employee.nic}</p>
-                  </div>
-                  
-                  <div className="md:col-span-2">
-                    <p className="text-sm text-gray-500">Address</p>
-                    <p>{employee.address}</p>
-                  </div>
-                  
-                  <div>
-                    <p className="text-sm text-gray-500">Join Date</p>
-                    <p>{employee.joinDate}</p>
-                  </div>
-                </div>
+
+              <div>
+                <label className="block text-sm font-medium">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={editData.lastName}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={editData.email || ""}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium">
+                  Job Role
+                </label>
+                <input
+                  type="text"
+                  name="jobRole"
+                  value={editData.jobRole || ""}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
+              {/* Add other fields as needed */}
             </div>
-          )}
-        </div>
-      ) : searchQuery && (
-        <div className="bg-white p-6 rounded-lg shadow text-center">
-          <p>No employee found with {searchType === 'name' ? 'that name' : 'that ID'}</p>
+
+            <div className="flex justify-end mt-6 space-x-4">
+              <button
+                onClick={handleCancel}
+                className="px-4 py-2 border rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

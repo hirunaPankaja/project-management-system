@@ -13,7 +13,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "architecture_engineer")
+@Table(name = "architecture_manager")
 public class ArchitectureManager extends Employee{
     private String constructionVisitLocation;
     private Date constructionVisitDate;

@@ -2,6 +2,7 @@ package com.project_mgmt.pms.controller;
 
 import com.project_mgmt.pms.data.Complain;
 import com.project_mgmt.pms.data.Employee;
+import com.project_mgmt.pms.dto.EmployeeSearch;
 import com.project_mgmt.pms.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -93,5 +94,15 @@ public class EmployeeController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @GetMapping("/architecture")
+    public List<EmployeeSearch> getArchitectureEmployeeSummaries() {
+        return employeeService.getAllArchitectureEmployeesSummary();
+    }
+
+    @GetMapping("/designer")
+    public List<EmployeeSearch> getDesignerEmployeeSummaries() {
+        return employeeService.getAllDesignerEmployeesSummary();
     }
 }

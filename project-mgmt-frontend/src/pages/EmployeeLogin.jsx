@@ -155,18 +155,19 @@ export default function EmployeeLogin() {
                 >
                   <option value="">-- Select Job Role --</option>
                   <option value="designer">Designer</option>
+                  <option value="admin">Admin</option>
                   <option value="architecture">Architecture</option>
-                  <option value="design-manager">Design Manager</option>
-                  <option value="architecture-manager">Architecture Manager</option>
-                  <option value="project-manager">Project Manager</option>
-                  <option value="civil-engineer">Civil Engineer</option>
-                  <option value="civil-officer">Civil Officer</option>
-                  <option value="property-officer">Property Officer</option>
-                  <option value="property-manager">Property Manager</option>
-                  <option value="property-executive">Property Executive</option>
-                  <option value="procurement-manager">Procurement Manager</option>
+                  <option value="design_manager">Design Manager</option>
+                  <option value="architecture_manager">Architecture Manager</option>
+                  <option value="project_manager">Project Manager</option>
+                  <option value="civil_engineer">Civil Engineer</option>
+                  <option value="civil_officer">Civil Officer</option>
+                  <option value="property_officer">Property Officer</option>
+                  <option value="property_manager">Property Manager</option>
+                  <option value="property_executive">Property Executive</option>
+                  <option value="procurement_manager">Procurement Manager</option>
                   <option value="lawyer">Lawyer</option>
-                  <option value="head-of-department">Head of Department</option>
+                  <option value="head_of_department">Head of Department</option>
                 </select>
               </div>
             </div>

@@ -3,12 +3,14 @@ package com.project_mgmt.pms.service;
 import com.project_mgmt.pms.data.Complain;
 import com.project_mgmt.pms.data.Employee;
 import com.project_mgmt.pms.data.Meeting;
+import com.project_mgmt.pms.dto.EmployeeSearch;
 import com.project_mgmt.pms.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -55,13 +57,13 @@ public class EmployeeService {
        boolean existsInRole = switch (jobRole.toLowerCase()) {
            case "designer" -> designerRepository.existsById(empId);
            case "architecture" -> architectureRepository.existsById(empId);
-           case "design-manager" -> designManagerRepository.existsById(empId);
-           case "architecture-manager" -> architectureManager.existsById(empId);
-           case "civil-engineer" -> civilEngineerRepository.existsById(empId);
-           case "property-officer" -> propertyOfficerRepository.existsById(empId);
-           case "property-manager" -> propertyManagerRepository.existsById(empId);
-           case "property-executive" -> propertyExecutiveRepository.existsById(empId);
-           case "project-manager" -> projectManagerRepository.existsById(empId);
+           case "design_manager" -> designManagerRepository.existsById(empId);
+           case "architecture_manager" -> architectureManager.existsById(empId);
+           case "civil_engineer" -> civilEngineerRepository.existsById(empId);
+           case "property_officer" -> propertyOfficerRepository.existsById(empId);
+           case "property_manager" -> propertyManagerRepository.existsById(empId);
+           case "property_executive" -> propertyExecutiveRepository.existsById(empId);
+           case "project_manager" -> projectManagerRepository.existsById(empId);
            default -> false;
        };
 
@@ -109,5 +111,22 @@ public class EmployeeService {
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
         employee.setProfilePicture(newPicture);
         employeeRepository.save(employee);
+    }
+
+
+    public List<EmployeeSearch> getAllArchitectureEmployeesSummary() {
+        List<String> empIds = architectureRepository.findAllEmployeeIds();
+        return getEmployeeSummariesByIds(empIds);
+    }
+
+    public List<EmployeeSearch> getAllDesignerEmployeesSummary() {
+        List<String> empIds = designerRepository.findAllEmployeeIds();
+        return getEmployeeSummariesByIds(empIds);
+    }
+    private List<EmployeeSearch> getEmployeeSummariesByIds(List<String> empIds) {
+        List<Employee> employees = employeeRepository.findAllById(empIds);
+        return employees.stream()
+                .map(e -> new EmployeeSearch(e.getEmpId(), e.getFirstName(), e.getLastName()))
+                .collect(Collectors.toList());
     }
 }

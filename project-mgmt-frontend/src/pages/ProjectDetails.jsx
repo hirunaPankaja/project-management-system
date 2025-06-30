@@ -1,93 +1,49 @@
 import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Chart, registerables } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { getProjectDashboard } from "../services/employeeApi";
 
 Chart.register(...registerables);
 
 export default function ProjectDetails() {
+  const { projectId } = useParams();
   const ganttChartRef = useRef(null);
-
   const [expandedTaskId, setExpandedTaskId] = useState(null);
-
-  const project = {
-    id: "P001",
-    name: "New Outlet Jaffna",
-    startDate: "2025-07-01",
-    expectedEndDate: "2025-12-31",
-    tasks: [
-      {
-        id: 1,
-        name: "Foundation",
-        startDate: "2025-07-01",
-        expectedEndDate: "2025-08-15",
-        endDate: "2025-08-10",
-        budget: 100000,
-        expectedBudget: 95000,
-        saving: 5000,
-        status: "complete",
-        design: {
-          startDate: "2025-07-01",
-          endDate: "2025-07-10",
-          budget: 20000,
-          status: "complete",
-        },
-        architecture: {
-          startDate: "2025-07-05",
-          endDate: "2025-07-20",
-          budget: 30000,
-          status: "complete",
-        },
-      },
-      {
-        id: 2,
-        name: "Structure",
-        startDate: "2025-08-16",
-        expectedEndDate: "2025-10-15",
-        endDate: null,
-        budget: 150000,
-        expectedBudget: 145000,
-        saving: null,
-        status: "ongoing",
-        design: {
-          startDate: "2025-08-16",
-          endDate: "2025-08-30",
-          budget: 25000,
-          status: "ongoing",
-        },
-        architecture: {
-          startDate: "2025-08-20",
-          endDate: "2025-09-10",
-          budget: 35000,
-          status: "pending",
-        },
-      },
-    ],
-  };
+  const [project, setProject] = useState(null);
 
   useEffect(() => {
+    getProjectDashboard(projectId)
+      .then((res) => setProject(res.data))
+      .catch((err) => console.error(err));
+  }, [projectId]);
+
+  useEffect(() => {
+    if (!project) return;
+
     const ctx = ganttChartRef.current.getContext("2d");
 
     const chart = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: project.tasks.map((t) => t.name),
+        labels: project.tasks.map((t) => t.taskTitle),
         datasets: [
           {
             label: "Timeline",
             data: project.tasks.map((t, idx) => ({
               x: [
-                new Date(t.startDate),
-                new Date(t.expectedEndDate),
+                new Date(t.taskStartDate),
+                new Date(t.dueDate ?? project.projectTargetDate),
               ],
               y: idx,
             })),
             backgroundColor: project.tasks.map((t) =>
-              t.status === "complete"
-                ? "rgba(34,197,94,0.7)"      // green
-                : t.status === "ongoing"
-                ? "rgba(59,130,246,0.7)"    // blue
-                : "rgba(234,179,8,0.7)"     // yellow
+              t.taskStatus === "complete"
+                ? "rgba(34,197,94,0.7)"
+                : t.taskStatus === "ongoing"
+                ? "rgba(59,130,246,0.7)"
+                : "rgba(234,179,8,0.7)"
             ),
             borderRadius: 4,
             borderSkipped: false,
@@ -108,15 +64,15 @@ export default function ProjectDetails() {
                 month: "MMM yyyy",
               },
             },
-            min: new Date(project.startDate),
-            max: new Date(project.expectedEndDate),
+            min: new Date(project.projectStartDate),
+            max: new Date(project.projectTargetDate),
           },
           y: {
             grid: {
               display: false,
             },
             ticks: {
-              color: "#4B5563", // gray-700
+              color: "#4B5563",
               font: {
                 size: 14,
               },
@@ -143,13 +99,16 @@ export default function ProjectDetails() {
     return () => chart.destroy();
   }, [project]);
 
+  if (!project) {
+    return <div className="p-6">Loading...</div>;
+  }
+
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">
-        {project.name} Details
+        {project.projectName} Details
       </h1>
 
-      {/* Gantt Chart */}
       <div className="bg-white p-4 rounded shadow mb-8">
         <h2 className="text-lg font-semibold text-gray-700 mb-4">
           Gantt Timeline
@@ -159,7 +118,6 @@ export default function ProjectDetails() {
         </div>
       </div>
 
-      {/* Task Table */}
       <div className="bg-white rounded shadow">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-100">
@@ -181,37 +139,37 @@ export default function ProjectDetails() {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {project.tasks.map((task) => {
-              const isExpanded = expandedTaskId === task.id;
+              const isExpanded = expandedTaskId === task.taskId;
               return (
-                <tr key={task.id} className="hover:bg-gray-50">
+                <tr key={task.taskId} className="hover:bg-gray-50">
                   <td className="px-4 py-3 font-medium text-gray-800">
-                    {task.name}
+                    {task.taskTitle}
                   </td>
                   <td className="px-4 py-3 text-gray-600 text-sm">
-                    {task.startDate} -{" "}
-                    {task.endDate || task.expectedEndDate}
+                    {task.taskStartDate?.substring(0, 10)} -{" "}
+                    {(task.completeDate ?? task.dueDate)?.substring(0, 10)}
                   </td>
                   <td className="px-4 py-3 text-gray-600 text-sm">
-                    Rs. {task.budget.toLocaleString()}
+                    Rs. {task.taskExpendBudget?.toLocaleString()}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     <span
                       className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        task.status === "complete"
+                        task.taskStatus === "complete"
                           ? "bg-green-100 text-green-800"
-                          : task.status === "ongoing"
+                          : task.taskStatus === "ongoing"
                           ? "bg-blue-100 text-blue-800"
                           : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
-                      {task.status}
+                      {task.taskStatus}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() =>
                         setExpandedTaskId(
-                          isExpanded ? null : task.id
+                          isExpanded ? null : task.taskId
                         )
                       }
                       className="text-gray-500 hover:text-gray-700"
@@ -231,45 +189,45 @@ export default function ProjectDetails() {
 
         {/* Expanded Rows */}
         {project.tasks.map((task) => {
-          const isExpanded = expandedTaskId === task.id;
+          const isExpanded = expandedTaskId === task.taskId;
           if (!isExpanded) return null;
 
           return (
             <div
-              key={task.id}
+              key={task.taskId}
               className="border-t border-gray-200 bg-gray-50 px-6 py-4 text-sm text-gray-700"
             >
               <h4 className="text-gray-800 font-semibold mb-2">
                 Design
               </h4>
-              <ul className="mb-4">
-                <li>
-                  Start: {task.design.startDate}
-                </li>
-                <li>
-                  End: {task.design.endDate}
-                </li>
-                <li>
-                  Budget: Rs. {task.design.budget}
-                </li>
-                <li>Status: {task.design.status}</li>
-              </ul>
+              {task.designVersions?.length > 0 ? (
+                task.designVersions.map((d) => (
+                  <ul key={d.designVersionId} className="mb-4">
+                    <li>Start: {d.designStartDate?.substring(0, 10)}</li>
+                    <li>End: {d.designEndDate?.substring(0, 10)}</li>
+                    <li>Budget: Rs. {d.designExpectedBudget}</li>
+                    <li>Status: {d.status}</li>
+                  </ul>
+                ))
+              ) : (
+                <p className="text-gray-600">No design versions.</p>
+              )}
 
               <h4 className="text-gray-800 font-semibold mb-2">
                 Architecture
               </h4>
-              <ul>
-                <li>
-                  Start: {task.architecture.startDate}
-                </li>
-                <li>
-                  End: {task.architecture.endDate}
-                </li>
-                <li>
-                  Budget: Rs. {task.architecture.budget}
-                </li>
-                <li>Status: {task.architecture.status}</li>
-              </ul>
+              {task.architectureVersions?.length > 0 ? (
+                task.architectureVersions.map((a) => (
+                  <ul key={a.architectureVersionId}>
+                    <li>Start: {a.architectureStartDate?.substring(0, 10)}</li>
+                    <li>End: {a.architectureEndDate?.substring(0, 10)}</li>
+                    <li>Budget: Rs. {a.architectureExpectedBudget}</li>
+                    <li>Status: {a.status}</li>
+                  </ul>
+                ))
+              ) : (
+                <p className="text-gray-600">No architecture versions.</p>
+              )}
             </div>
           );
         })}

@@ -27,8 +27,10 @@ import ProjectReport from "../pages/projectmanager/ProjectReport";
 import ProjectDetails from "../pages/ProjectDetails";
 import ProjectSection from "../pages/projectmanager/ProjectSection";
 
-
-
+// ✅ Import your new pages:
+import ProjectOverviewPage from "../pages/ProjectOverviewPage";
+import ProjectDashboardPage from "../pages/ProjectDashboardPage";
+import AssignTaskPage from "../pages/AssignTaskPage";
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -36,8 +38,8 @@ const AppRouter = () => (
       <Route path="/" element={<LandingPage />} />
       <Route path="/employee-login" element={<EmployeeLogin />} />
       <Route path="/supplier-login" element={<SupplierLogin />} />
-      <Route path="/supplier-registration" element={<SupplierRegistration />}/>
-       
+      <Route path="/supplier-registration" element={<SupplierRegistration />} />
+
       <Route path="/home" element={<HomeLayout />}>
         <Route index element={<HomeContent />} />
         <Route path="admin/register-employee" element={<RegisterEmployee />} />
@@ -46,36 +48,47 @@ const AppRouter = () => (
 
         <Route path="supplier/supplier-dashboard" element={<SupplierDashboard />} />
         <Route path="supplier/product-catalog" element={<SupplierProductCatalog />} />
-        <Route path="supplier/contracts" element={<Contracts />} />        
-        
+        <Route path="supplier/contracts" element={<Contracts />} />
+
         <Route path="propertyofficer/proposal" element={<PropertyOfficerProposal />} />
         <Route path="propertyofficer/feedback" element={<PropertyOfficerFeedback />} />
         <Route path="map" element={<Map />} />
 
-       <Route path="propertymanager/view-proposals" element={<PropertyManagerViewProposals />} />
+        <Route path="propertymanager/view-proposals" element={<PropertyManagerViewProposals />} />
 
-       <Route path="lawyer/verify-proposals" element={<LawyerVerifyProposals />} />
+        <Route path="lawyer/verify-proposals" element={<LawyerVerifyProposals />} />
 
-       <Route path="propertyexecutive/manage-outlets" element={<PropertyExecutiveManageOutlets />} />
-       <Route path="propertyexecutive/outlet-analysis" element={<PropertyExecutiveOutletAnalysis />} />
+        <Route path="propertyexecutive/manage-outlets" element={<PropertyExecutiveManageOutlets />} />
+        <Route path="propertyexecutive/outlet-analysis" element={<PropertyExecutiveOutletAnalysis />} />
 
-       <Route path="civilengineer/task-logs" element={<TaskLogsPage />} />
+        <Route path="civilengineer/task-logs" element={<TaskLogsPage />} />
 
-       <Route path="managemeetings" element={<ManageMeeting />} />
+        <Route path="managemeetings" element={<ManageMeeting />} />
 
-       <Route path="project-manager/projects" element={<ProjectManagerProjects />} />
+        <Route path="project-manager/projects" element={<ProjectManagerProjects />} />
 
-       <Route path="project-manager/dashboard" element={<ProjectDashboard />} />
-      
-       <Route path="project-manager/report" element={<ProjectReport />} />
+        <Route path="project-manager/dashboard" element={<ProjectDashboard />} />
+
+        <Route path="project-manager/report" element={<ProjectReport />} />
         <Route path="project-manager/project" element={<ProjectSection />} />
 
+        <Route path="projects">
+         <Route index element={<ProjectOverviewPage />} />
+              <Route path=":projectId" element={<ProjectDashboardPage />} />
+  <Route
+    path=":projectId/tasks/:taskId"
+    element={<AssignTaskPage managerType="design-manager" />}
+  />
+  <Route
+    path=":projectId/tasks/:taskId/arch"
+    element={<AssignTaskPage managerType="architecture-manager" />}
+  />
+</Route>
+      </Route>
 
+      {/* Standalone route outside HomeLayout */}
+      <Route path="project/:projectId" element={<ProjectDetails />} />
 
-
-
-    </Route>
-      <Route path="/project/:projectId" element={<ProjectDetails />} /> 
       <Route path="*" element={<NotFound />} />
     </Routes>
   </BrowserRouter>
