@@ -16,8 +16,12 @@ const Login = () => {
       const res = await loginUser({ email, password });
       const supplierId = res.data;
       console.log("Supplier ID:", supplierId);
-      localStorage.setItem("supplierId", supplierId);
-    
+      localStorage.setItem("empId", supplierId);
+      localStorage.setItem("jobRole", "supplier");
+      localStorage.setItem("firstName", "supplier"); 
+            localStorage.setItem("lastName", "supplier"); 
+
+      localStorage.setItem
       toast.success('Login successful! Redirecting...');
       setTimeout(() => {
         navigate('/home/supplier/supplier-dashboard');
