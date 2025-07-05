@@ -16,4 +16,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
     List<EmployeeSearch> findAllEmployeeSummaries();
 
     Optional<Employee> findTopByOrderByEmpIdDesc();
+
+    // Add this to your existing EmployeeRepository
+    Optional<Employee> findByEmail(String email);
 }

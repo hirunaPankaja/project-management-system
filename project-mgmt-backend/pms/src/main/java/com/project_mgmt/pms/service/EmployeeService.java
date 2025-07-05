@@ -42,6 +42,9 @@ public class EmployeeService {
     @Autowired
     private AdminRepository adminRepository;
 
+    private final Map<String, String> otpStorage = new HashMap<>();
+    private final Random random = new Random();
+
    //log in
    public Map<String, String> login(String email, String password, String jobRole) {
        Optional<Employee> optionalEmployee =
@@ -131,5 +134,70 @@ public class EmployeeService {
         return employees.stream()
                 .map(e -> new EmployeeSearch(e.getEmpId(), e.getFirstName(), e.getLastName()))
                 .collect(Collectors.toList());
+    }
+
+    public String requestPasswordReset(String email, String jobRole) {
+        Optional<Employee> employee = employeeRepository.findByEmail(email);
+        if (employee.isEmpty()) {
+            throw new IllegalArgumentException("Employee not found with this email");
+        }
+
+        // Verify job role exists (similar to login verification)
+        boolean existsInRole = switch (jobRole.toLowerCase()) {
+            case "designer" -> designerRepository.existsById(employee.get().getEmpId());
+            case "architecture" -> architectureRepository.existsById(employee.get().getEmpId());
+            case "design_manager" -> designManagerRepository.existsById(employee.get().getEmpId());
+            case "architecture_manager" -> architectureManager.existsById(employee.get().getEmpId());
+            case "civil_engineer" -> civilEngineerRepository.existsById(employee.get().getEmpId());
+            case "property_officer" -> propertyOfficerRepository.existsById(employee.get().getEmpId());
+            case "property_manager" -> propertyManagerRepository.existsById(employee.get().getEmpId());
+            case "property_executive" -> propertyExecutiveRepository.existsById(employee.get().getEmpId());
+            case "project_manager" -> projectManagerRepository.existsById(employee.get().getEmpId());
+            case "admin" -> adminRepository.existsById(employee.get().getEmpId());
+            default -> false;
+        };
+
+        if (!existsInRole) {
+            throw new IllegalArgumentException("Invalid job role for this employee");
+        }
+
+        // Generate and store OTP
+        String otp = String.format("%05d", random.nextInt(100000));
+        String key = email + ":" + jobRole;
+        otpStorage.put(key, otp);
+
+        // In production, you would send the OTP via email here
+        // For demo purposes, we'll return the OTP
+        return otp;
+    }
+
+    public boolean verifyOtp(String email, String jobRole, String otp) {
+        String key = email + ":" + jobRole;
+        String storedOtp = otpStorage.get(key);
+
+        if (storedOtp == null || !storedOtp.equals(otp)) {
+            throw new IllegalArgumentException("Invalid OTP");
+        }
+        return true;
+    }
+
+    public void resetPassword(String email, String jobRole, String newPassword) {
+        // Verify OTP first (this will throw exception if invalid)
+        String key = email + ":" + jobRole;
+        if (!otpStorage.containsKey(key)) {
+            throw new IllegalArgumentException("OTP verification required first");
+        }
+
+        Optional<Employee> employee = employeeRepository.findByEmail(email);
+        if (employee.isEmpty()) {
+            throw new IllegalArgumentException("Employee not found");
+        }
+
+        Employee emp = employee.get();
+        emp.setPassword(newPassword);
+        employeeRepository.save(emp);
+
+        // Clear the OTP after successful password reset
+        otpStorage.remove(key);
     }
 }

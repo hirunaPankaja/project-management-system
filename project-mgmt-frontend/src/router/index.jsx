@@ -3,6 +3,7 @@ import HomeLayout from "../pages/HomeLayout";
 import HomeContent from "../pages/HomeContent";
 import LandingPage from "../pages/LandingPage";
 import EmployeeLogin from "../pages/EmployeeLogin";
+import EmployeeForgotPassword from "../pages/EmployeeForgotPassword";
 import NotFound from "../pages/NotFound";
 import RegisterEmployee from "../pages/admin/RegisterEmployee";
 import SearchEmployee from "../pages/admin/SearchEmployee";
@@ -35,6 +36,7 @@ import MyProposals from "../pages/propertyOfficer/MyProposals";
 import AllProposals from "../pages/propertymanager/AllProposals";
 import ProposalSummary from "../pages/propertymanager/ProposalSummary";
 
+
 const AppRouter = () => (
   <BrowserRouter>
     <Routes>
@@ -42,6 +44,7 @@ const AppRouter = () => (
       <Route path="/employee-login" element={<EmployeeLogin />} />
       <Route path="/supplier-login" element={<SupplierLogin />} />
       <Route path="/supplier-registration" element={<SupplierRegistration />} />
+      <Route path="/employee-forgot-password" element={<EmployeeForgotPassword />} />
 
       <Route path="/home" element={<HomeLayout />}>
         <Route index element={<HomeContent />} />

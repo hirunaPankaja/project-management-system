@@ -137,3 +137,33 @@ export const downloadProjectReport = async (projectId) => {
     responseType: "blob", 
   });
 };
+
+// Add these to your existing employeeApi.js (at the bottom)
+export const requestPasswordReset = async ({ email, jobRole }) => {
+  return axios.post(`${empInfoAPI}/employee/request-password-reset`, null, {
+    params: {
+      email,
+      jobRole
+    }
+  });
+};
+
+export const verifyOtp = async ({ email, jobRole, otp }) => {
+  return axios.post(`${empInfoAPI}/employee/verify-otp`, null, {
+    params: {
+      email,
+      jobRole,
+      otp
+    }
+  });
+};
+
+export const resetPassword = async ({ email, jobRole, newPassword }) => {
+  return axios.post(`${empInfoAPI}/employee/reset-password`, null, {
+    params: {
+      email,
+      jobRole,
+      newPassword
+    }
+  });
+};

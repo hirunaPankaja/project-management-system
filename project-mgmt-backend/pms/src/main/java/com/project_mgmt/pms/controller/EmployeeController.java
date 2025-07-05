@@ -105,4 +105,58 @@ public class EmployeeController {
     public List<EmployeeSearch> getDesignerEmployeeSummaries() {
         return employeeService.getAllDesignerEmployeesSummary();
     }
+
+    // Add these methods to your existing EmployeeController
+    @PostMapping("/request-password-reset")
+    public ResponseEntity<String> requestPasswordReset(
+            @RequestParam String email,
+            @RequestParam String jobRole
+    ) {
+        try {
+            String otp = employeeService.requestPasswordReset(email, jobRole);
+            return ResponseEntity.ok("OTP sent to your email");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<String> verifyOtp(
+            @RequestParam String email,
+            @RequestParam String jobRole,
+            @RequestParam String otp
+    ) {
+        try {
+            boolean isValid = employeeService.verifyOtp(email, jobRole, otp);
+            if (isValid) {
+                return ResponseEntity.ok("OTP verified successfully");
+            } else {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body("Invalid OTP");
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(
+            @RequestParam String email,
+            @RequestParam String jobRole,
+            @RequestParam String newPassword
+    ) {
+        try {
+            employeeService.resetPassword(email, jobRole, newPassword);
+            return ResponseEntity.ok("Password reset successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
 }

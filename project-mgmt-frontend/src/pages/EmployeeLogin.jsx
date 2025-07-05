@@ -186,7 +186,7 @@ export default function EmployeeLogin() {
               </div>
 
               <div className="text-sm">
-                <Link to="/forgot-password" className="font-medium text-emerald-600 hover:text-emerald-500">
+                <Link to="/employee-forgot-password" className="font-medium text-emerald-600 hover:text-emerald-500">
                   Forgot password?
                 </Link>
               </div>
