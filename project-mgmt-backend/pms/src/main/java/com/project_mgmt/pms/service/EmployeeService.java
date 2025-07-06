@@ -42,6 +42,9 @@ public class EmployeeService {
     @Autowired
     private AdminRepository adminRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     private final Map<String, String> otpStorage = new HashMap<>();
     private final Random random = new Random();
 
@@ -166,9 +169,13 @@ public class EmployeeService {
         String key = email + ":" + jobRole;
         otpStorage.put(key, otp);
 
-        // In production, you would send the OTP via email here
-        // For demo purposes, we'll return the OTP
-        return otp;
+        try {
+            emailService.sendOtpEmail(email, otp);
+            return "OTP sent to your email";
+        } catch (Exception e) {
+            otpStorage.remove(key); // Clean up if email fails
+            throw new IllegalArgumentException("Failed to send OTP email. Please try again.");
+        }
     }
 
     public boolean verifyOtp(String email, String jobRole, String otp) {
