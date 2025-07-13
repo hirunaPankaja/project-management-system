@@ -47,8 +47,10 @@ public class EmployeeService {
 
     private final Map<String, String> otpStorage = new HashMap<>();
     private final Random random = new Random();
+    @Autowired
+    private LawyerRepository lawyerRepository;
 
-   //log in
+    //log in
    public Map<String, String> login(String email, String password, String jobRole) {
        Optional<Employee> optionalEmployee =
                employeeRepository.findByEmailAndPassword(email, password);
@@ -73,6 +75,7 @@ public class EmployeeService {
            case "property_executive" -> propertyExecutiveRepository.existsById(empId);
            case "project_manager" -> projectManagerRepository.existsById(empId);
            case "admin" -> adminRepository.existsById(empId);
+           case "lawyer" -> lawyerRepository.existsById(empId);
            default -> false;
        };
 
