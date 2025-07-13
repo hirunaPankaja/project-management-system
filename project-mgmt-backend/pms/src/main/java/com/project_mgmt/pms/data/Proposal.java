@@ -31,11 +31,10 @@ public class Proposal {
     private double rentFee;
     private String proposalFeedback;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "location_id", referencedColumnName = "locationId")
     private Location location;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "proposer_id", referencedColumnName = "empId")
     private Employee proposer;
-
 }
