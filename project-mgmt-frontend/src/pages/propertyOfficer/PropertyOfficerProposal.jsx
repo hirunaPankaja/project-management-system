@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { proposeLocation } from "../../services/employeeApi"; // Adjust the path as needed
 
-const PropertyOfficerProposal = ({ onClose }) => {
-  const navigate = useNavigate();
+const PropertyOfficerProposal = ({ onClose, onSubmitSuccess, empId }) => {
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     proposal_name: '',
     area: '',
-    propose_date: '',
+    propose_date: new Date().toISOString().split('T')[0], // Default to today
     rent_fee: '',
     property_owner_name: '',
     property_owner_contact_no: [''],
     longitude: '',
     latitude: '',
     district: '',
-    province: ''
+    province: '',
+    proposal_description: '',
+    proposal_status: 'pending',
+    proposal_status_date: new Date().toISOString()
   });
 
   const handleChange = (e) => {
@@ -63,20 +66,52 @@ const PropertyOfficerProposal = ({ onClose }) => {
     return requiredFields.every(field => field.trim() !== '');
   };
 
-  const handleSubmit = (e) => {
+    
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate both steps before submission
     if (!validateStep1() || !validateStep2()) {
       alert('Please fill all required fields in both steps before submitting.');
       return;
     }
 
-    console.log("Submitted Proposal:", formData);
-    // TODO: Connect to backend API
-    
-    // Show success message and reset form
-    setSubmitted(true);
+    try {
+      // Prepare the data for your API
+      const location = {
+        longitude: parseFloat(formData.longitude),
+        latitude: parseFloat(formData.latitude),
+        province: formData.province,
+        district: formData.district,
+        legalStatus: "Owned",
+      };
+
+      const proposal = {
+        proposalName: formData.proposal_name,
+        proposalDescription: formData.proposal_description,
+        proposalStatus: formData.proposal_status,
+        proposalDate: new Date(formData.propose_date),
+        propsalStatusDate: new Date(),
+        propertyOwnerName: formData.property_owner_name,
+        propertyOwnerContactNo: formData.property_owner_contact_no.join(','),
+        rentFee: parseFloat(formData.rent_fee),
+        proposalFeedback: "",
+        area: formData.area,
+      };
+
+      // Call your API
+      await proposeLocation(empId, proposal, location);
+      
+      // Show success state
+      setSubmitted(true);
+      
+      // Notify parent component
+      setTimeout(() => {
+        onSubmitSuccess();
+      }, 1500);
+    } catch (error) {
+      console.error("Submission failed:", error);
+      alert("Failed to submit proposal. Please try again.");
+    }
   };
 
   const nextStep = () => {
@@ -109,32 +144,36 @@ const PropertyOfficerProposal = ({ onClose }) => {
   };
 
   if (submitted) {
-    return (
-      <div className="flex justify-center py-10 bg-gray-50 px-4">
-        <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-8 text-center">
-          <div className="text-green-500 text-5xl mb-4">✓</div>
-          <h2 className="text-2xl font-bold text-green-700 mb-4">Proposal Submitted Successfully!</h2>
-          <p className="text-gray-600 mb-6">Your property proposal has been submitted successfully.</p>
-          <button
-            onClick={() => navigate('/home')} 
-            className="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded transition"
-          >
-            Done
-          </button>
-        </div>
-      </div>
-    );
-  }
+  return (
+    <div className="p-6 text-center">
+      <div className="text-green-500 text-4xl mb-3">✓</div>
+      <h3 className="text-lg font-medium mb-2">Proposal Submitted</h3>
+      <button
+        onClick={onClose}
+        className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+      >
+        Close
+      </button>
+    </div>
+  );
+}
 
   return (
-    <div className="flex justify-center py-10 bg-gray-50 px-4">
-      <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-8">
-        <h2 className="text-2xl font-bold text-green-700 mb-8 text-center">
-          Property Proposal
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold text-gray-800">
+          New Property Proposal
         </h2>
+        <button
+          onClick={onClose}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          ✕
+        </button>
+      </div>
         
         {/* Step indicator */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           <div className="flex items-center">
             <div className={`flex items-center justify-center w-8 h-8 rounded-full ${step >= 1 ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
               1
@@ -146,12 +185,18 @@ const PropertyOfficerProposal = ({ onClose }) => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4">
           {step === 1 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col md:col-span-2">
                 <label htmlFor="proposal_name" className="text-sm text-gray-700 mb-1">Proposal Name*</label>
                 <input id="proposal_name" name="proposal_name" value={formData.proposal_name} onChange={handleChange}
+                  className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500" required />
+              </div>
+
+              <div className="flex flex-col md:col-span-2">
+                <label htmlFor="proposal_description" className="text-sm text-gray-700 mb-1">Description*</label>
+                <textarea id="proposal_description" name="proposal_description" value={formData.proposal_description} onChange={handleChange}rows={4}
                   className="bg-gray-100 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-green-500" required />
               </div>
 
@@ -266,7 +311,6 @@ const PropertyOfficerProposal = ({ onClose }) => {
             </div>
           )}
         </form>
-      </div>
     </div>
   );
 };

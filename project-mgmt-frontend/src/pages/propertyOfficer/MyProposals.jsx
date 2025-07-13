@@ -1,236 +1,115 @@
 import { useEffect, useState } from "react";
-import {
-  filterProposalsByProposer,
-  proposeLocation,
-} from "../../services/employeeApi";
+import { filterProposalsByProposer } from "../../services/employeeApi";
+import PropertyOfficerProposal from "./PropertyOfficerProposal"; // Adjust the import path
 
 export default function MyProposals() {
   const [proposals, setProposals] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    proposalName: "",
-    proposalDescription: "",
-    proposalStatus: "pending",
-    propertyOwnerName: "",
-    propertyOwnerContactNo: "",
-    rentFee: "",
-    longitude: "",
-    latitude: "",
-    province: "",
-    district: "",
-  });
+  const [showProposalForm, setShowProposalForm] = useState(false);
+  const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
   const empId = localStorage.getItem("empId");
 
-  const loadProposals = () => {
-    filterProposalsByProposer(empId).then((res) => {
-      setProposals(res.data);
-    });
+  const [loading, setLoading] = useState(false);
+
+  // Then in your loadProposals:
+  const loadProposals = async () => {
+  setLoading(true);
+  try {
+    const res = await filterProposalsByProposer(empId);
+    setProposals(res.data);
+  } catch (error) {
+    console.error("Failed to load proposals:", error);
+  } finally {
+    setLoading(false);
+  }
   };
 
   useEffect(() => {
     loadProposals();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleProposalSubmit = () => {
+    setSubmissionSuccess(true);
+    setShowProposalForm(false);
+    loadProposals();
+    
+    // Hide success message after 3 seconds
+    setTimeout(() => {
+      setSubmissionSuccess(false);
+    }, 3000);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const location = {
-      longitude: parseFloat(formData.longitude),
-      latitude: parseFloat(formData.latitude),
-      province: formData.province,
-      district: formData.district,
-      legalStatus: "Owned", // or any default value
-    };
-
-    const proposal = {
-      proposalName: formData.proposalName,
-      proposalDescription: formData.proposalDescription,
-      proposalStatus: formData.proposalStatus,
-      proposalDate: new Date(), // current date
-      propsalStatusDate: new Date(), // optional
-      propertyOwnerName: formData.propertyOwnerName,
-      propertyOwnerContactNo: formData.propertyOwnerContactNo,
-      rentFee: parseFloat(formData.rentFee),
-      proposalFeedback: "",
-      area: formData.district, // assuming area = district
-    };
-
-    proposeLocation(empId, proposal, location).then(() => {
-      setShowModal(false);
-      setFormData({
-        proposalName: "",
-        proposalDescription: "",
-        proposalStatus: "pending",
-        propertyOwnerName: "",
-        propertyOwnerContactNo: "",
-        rentFee: "",
-        longitude: "",
-        latitude: "",
-        province: "",
-        district: "",
-      });
-      loadProposals();
-    });
-  };
+  {showProposalForm && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity">
+    <div 
+      className="absolute inset-0" 
+      onClick={() => setShowProposalForm(false)}
+    ></div>
+    <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 animate-[fadeIn_0.3s] relative z-10">
+      <PropertyOfficerProposal 
+        onClose={() => setShowProposalForm(false)}
+        onSubmitSuccess={handleProposalSubmit}
+        empId={empId}
+      />
+    </div>
+  </div>
+)}
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">My Proposals</h1>
         <button
-          onClick={() => setShowModal(true)}
+          onClick={() => setShowProposalForm(true)}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           + Add New Proposal
         </button>
       </div>
 
-      <ul className="space-y-2">
-        {proposals.map((p) => (
-          <li
-            key={p.proposalId}
-            className="border p-4 rounded hover:bg-gray-50"
-          >
-            <h2 className="font-semibold">{p.proposalName}</h2>
-            <p className="text-gray-600">{p.proposalDescription}</p>
-            <p
-              className={`mt-2 font-medium ${
-                p.proposalFeedback
-                  ? "text-green-600"
-                  : "text-gray-500"
-              }`}
-            >
-              {p.proposalFeedback || "No feedback yet"}
-            </p>
-          </li>
-        ))}
-      </ul>
-
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded w-full max-w-lg">
-            <h2 className="text-xl font-bold mb-4">New Proposal</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                type="text"
-                name="proposalName"
-                placeholder="Proposal Name"
-                value={formData.proposalName}
-                onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-
-              <textarea
-                name="proposalDescription"
-                placeholder="Proposal Description"
-                value={formData.proposalDescription}
-                onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-
-              <input
-                type="text"
-                name="propertyOwnerName"
-                placeholder="Property Owner Name"
-                value={formData.propertyOwnerName}
-                onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-
-              <input
-                type="text"
-                name="propertyOwnerContactNo"
-                placeholder="Owner Contact No"
-                value={formData.propertyOwnerContactNo}
-                onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-
-              <input
-                type="number"
-                step="0.01"
-                name="rentFee"
-                placeholder="Rent Fee"
-                value={formData.rentFee}
-                onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="number"
-                  step="0.0001"
-                  name="latitude"
-                  placeholder="Latitude"
-                  value={formData.latitude}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded"
-                  required
-                />
-                <input
-                  type="number"
-                  step="0.0001"
-                  name="longitude"
-                  placeholder="Longitude"
-                  value={formData.longitude}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded"
-                  required
-                />
-              </div>
-
-              <input
-                type="text"
-                name="province"
-                placeholder="Province"
-                value={formData.province}
-                onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-
-              <input
-                type="text"
-                name="district"
-                placeholder="District"
-                value={formData.district}
-                onChange={handleChange}
-                className="w-full border px-3 py-2 rounded"
-                required
-              />
-
-              <div className="flex justify-end gap-3 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded border border-gray-300 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Save Proposal
-                </button>
-              </div>
-            </form>
-          </div>
+      {submissionSuccess && (
+        <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
+          Proposal submitted successfully!
         </div>
+      )}
+
+      {proposals.length === 0 ? (
+        <div className="text-center py-10 text-gray-500">
+          You haven't submitted any proposals yet.
+        </div>
+      ) : (
+        <ul className="space-y-2">
+          {proposals.map((p) => (
+            <li
+              key={p.proposalId}
+              className="border p-4 rounded hover:bg-gray-50"
+            >
+              <h2 className="font-semibold">{p.proposalName}</h2>
+              <p className="text-gray-600">{p.proposalDescription}</p>
+              <p
+                className={`mt-2 font-medium ${
+                  p.proposalFeedback
+                    ? "text-green-600"
+                    : "text-gray-500"
+                }`}
+              >
+                {p.proposalFeedback || "No feedback yet"}
+              </p>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {showProposalForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 animate-[fadeIn_0.3s]">
+            <PropertyOfficerProposal 
+              onClose={() => setShowProposalForm(false)}
+              onSubmitSuccess={handleProposalSubmit}
+              empId={empId}
+            />
+          </div>
+        </div>  
       )}
     </div>
   );
