@@ -104,6 +104,20 @@ export const updateProposalStatus = (proposalId, newStatus) => {
   );
 };
 
+// In your employeeApi.js
+export const submitProposalFeedback =  (proposalId, feedback) => {
+  return axios.put(
+    `${empInfoAPI}/api/proposal-manager/updateFeedback/${proposalId}`,
+    null, 
+    {
+      params: {
+        feedback,
+      }
+    }
+  );
+};
+  
+
 export const getProposalSummary = () => {
   return axios.get(`${empInfoAPI}/api/proposal/summary`);
 };
@@ -167,3 +181,4 @@ export const resetPassword = async ({ email, jobRole, newPassword }) => {
     }
   });
 };
+

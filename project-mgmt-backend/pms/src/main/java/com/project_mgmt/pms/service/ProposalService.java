@@ -40,6 +40,12 @@ public class ProposalService {
         return proposalRepository.save(proposal);
     }
 
+    public Proposal updateProposalFeedback(int proposalId, String feedback) {
+        Proposal proposal = proposalRepository.findById(proposalId).get();
+        proposal.setProposalFeedback(feedback); // Saves feedback text
+        return proposalRepository.save(proposal);
+    }
+
     public Map<String, Long> generateProposalSummary() {
         List<Proposal> proposals = proposalRepository.findAll();
         Map<String, Long> summary = new HashMap<>();

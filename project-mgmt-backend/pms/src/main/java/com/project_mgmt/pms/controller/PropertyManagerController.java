@@ -25,4 +25,11 @@ public class PropertyManagerController {
         return ResponseEntity.ok(proposal);
     }
 
+    @PutMapping("/updateFeedback/{proposalId}")
+    public ResponseEntity<Proposal> updateProposalFeedback(
+            @PathVariable int proposalId,
+            @RequestParam String feedback) {
+        Proposal proposal = proposalService.updateProposalFeedback(proposalId, feedback);
+        return ResponseEntity.ok(proposal);
+    }
 }

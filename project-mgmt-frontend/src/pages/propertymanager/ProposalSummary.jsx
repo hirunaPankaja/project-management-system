@@ -9,6 +9,15 @@ export default function ProposalSummary() {
   const [filteredProposals, setFilteredProposals] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("all");
 
+  // Define color mapping for consistent colors across chart and cards
+  const statusColors = {
+    pending: "#4FD1C5",
+    approve: "#F6AD55",
+    hold: "#F56565",
+    reject: "#9F7AEA",
+    complete: "#4299E1"
+  };
+
   useEffect(() => {
     // Fetch summary data
     getProposalSummary().then((res) => {
@@ -38,7 +47,7 @@ export default function ProposalSummary() {
     datasets: [
       {
         data: Object.values(summary),
-        backgroundColor: ["#4FD1C5", "#F6AD55", "#F56565", "#9F7AEA", "#4299E1"],
+        backgroundColor: Object.keys(summary).map(status => statusColors[status] || "#999999"),
       },
     ],
   };
@@ -84,14 +93,15 @@ export default function ProposalSummary() {
             <button
               key={status}
               onClick={() => handleStatusClick(status)}
-              className={`bg-white border rounded p-4 shadow text-center ${
-                selectedStatus === status ? "border-blue-500 ring-2 ring-blue-200" : "border-gray-200"
+              className={`text-white rounded p-4 shadow text-center ${
+                selectedStatus === status ? "ring-2 ring-blue-200" : ""
               }`}
+              style={{ backgroundColor: statusColors[status] || "#999999" }}
             >
-              <h2 className="text-lg font-bold text-gray-700 capitalize">
+              <h2 className="text-lg font-bold capitalize">
                 {status}
               </h2>
-              <p className="text-2xl font-semibold text-blue-600">{count}</p>
+              <p className="text-2xl font-semibold">{count}</p>
             </button>
           ))}
         </div>
