@@ -7,13 +7,29 @@ import {
 
 export default function AllProposals() {
   const [proposals, setProposals] = useState([]);
+  const [allProposals, setAllProposals] = useState([]); // Store original data
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (searchTerm === "") {
+      setProposals(allProposals);
+    } else {
+      const filtered = allProposals.filter(
+        (p) =>
+          p.proposalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          p.proposalDescription.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setProposals(filtered);
+    }
+  }, [searchTerm, allProposals]);
+
   const fetchData = async () => {
     const res = await getAllProposals();
+    setAllProposals(res.data);
     setProposals(res.data);
   };
 
@@ -25,6 +41,17 @@ export default function AllProposals() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">All Proposals</h1>
+
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="Search by name or description..."
+          className="border rounded p-2 w-full md:w-1/2"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead>
@@ -69,6 +96,7 @@ export default function AllProposals() {
                     <option value="approve">Approve</option>
                     <option value="hold">Hold</option>
                     <option value="reject">Reject</option>
+                    <option value="complete">Complete</option>
                   </select>
                 </td>
               </tr>
