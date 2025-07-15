@@ -1,19 +1,44 @@
-import React from 'react';
-
-const feedbackList = [
-  {
-    proposalName: 'Green Garden Flats',
-    comment: 'Well structured. Approved for next phase.',
-    date: '2025-06-21'
-  },
-  {
-    proposalName: 'Skyline Residencies',
-    comment: 'Awaiting updated documentation and floor plan.',
-    date: '2025-06-19'
-  }
-];
+import React, { useEffect, useState } from 'react';
+import { getAllProposals } from '../../services/employeeApi'; // Using your existing service
 
 const PropertyOfficerFeedback = () => {
+  const [feedbackList, setFeedbackList] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeedback = async () => {
+      try {
+        // Using your existing API service
+        const response = await getAllProposals();
+        
+        // Process the data
+        const proposalsWithFeedback = response.data
+          .filter(proposal => proposal.proposalFeedback?.trim())
+          .map(proposal => ({
+            proposalName: proposal.proposalName || "Unnamed Proposal",
+            comment: proposal.proposalFeedback,
+            date: proposal.propsalStatusDate?.substring(0, 10) || "No date"
+          }));
+        
+        setFeedbackList(proposalsWithFeedback);
+      } catch (error) {
+        console.error("Error loading feedback:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeedback();
+  }, []);
+
+  if (loading) return <div className="p-8">Loading feedback...</div>;
+  if (!feedbackList.length) return (
+    <div className="p-8">
+      <h2 className="text-2xl font-bold text-green-700 mb-6">Proposal Feedback</h2>
+      <p>No feedback available yet.</p>
+    </div>
+  );
+
   return (
     <div className="p-8">
       <h2 className="text-2xl font-bold text-green-700 mb-6">Proposal Feedback</h2>

@@ -166,7 +166,7 @@ export const userRolesConfig = {
       ,
          {
         name: "View Feedback",
-        icon: Map,
+        icon: MessageSquare,
         color: "bg-blue-500",
         path: "propertyofficer/feedback"
       },
@@ -189,10 +189,15 @@ export const userRolesConfig = {
         icon: Map
       },
       {
-        label: "Map",
-        path: "map",
-        icon: Map
+        label: "View Feedback",
+        path: "propertyofficer/feedback",
+        icon: MessageSquare
       },
+      {
+        label: "Meetings",
+        path: "managemeetings",
+        icon: CalendarClock
+      }
     
     ]
   },
