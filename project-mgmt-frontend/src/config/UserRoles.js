@@ -112,6 +112,12 @@ export const userRolesConfig = {
         icon: Map,
         color: "bg-blue-500",
         path: "map"
+      },
+      {
+        name: "Manage Meetings",
+        icon: CalendarClock,
+        color: "bg-indigo-600",
+        path: "managemeetings"
       }
     ],
     nav: [
@@ -134,7 +140,12 @@ export const userRolesConfig = {
         label: "Map",
         path: "map",
         icon: Map
-      }
+      },
+      {
+        label: "Map",
+        path: "map",
+        icon: Map
+      },
     ]
   },
 
@@ -158,6 +169,12 @@ export const userRolesConfig = {
         icon: Map,
         color: "bg-blue-500",
         path: "propertyofficer/feedback"
+      },
+      {
+        name: "Manage Meetings",
+        icon: CalendarClock,
+        color: "bg-indigo-600",
+        path: "managemeetings"
       }
     ],
     nav: [
@@ -170,7 +187,12 @@ export const userRolesConfig = {
         label: "Map",
         path: "map",
         icon: Map
-      }
+      },
+      {
+        label: "Map",
+        path: "map",
+        icon: Map
+      },
     
     ]
   },
@@ -194,6 +216,12 @@ export const userRolesConfig = {
         icon: Map,
         color: "bg-blue-500",
         path: "map"
+      },
+      {
+        name: "Manage Meetings",
+        icon: CalendarClock,
+        color: "bg-indigo-600",
+        path: "managemeetings"
       }
     ],
     nav: [
@@ -210,6 +238,11 @@ export const userRolesConfig = {
         label: "Map",
         path: "map",
         icon: Map
+      },
+      {
+        label: "Meetings",
+        path: "managemeetings",
+        icon: CalendarClock
       }
     ]
   },
@@ -227,6 +260,12 @@ export const userRolesConfig = {
         icon: Map,
         color: "bg-blue-500",
         path: "map"
+      },
+      {
+        name: "Manage Meetings",
+        icon: CalendarClock,
+        color: "bg-indigo-600",
+        path: "managemeetings"
       }
     ],
     nav: [
@@ -239,6 +278,11 @@ export const userRolesConfig = {
         label: "Map",
         path: "map",
         icon: Map
+      },
+      {
+        label: "Meetings",
+        path: "managemeetings",
+        icon: CalendarClock
       }
     ]
   },
@@ -262,6 +306,12 @@ export const userRolesConfig = {
         icon: Map,
         color: "bg-blue-500",
         path: "map"
+      },
+      {
+        name: "Manage Meetings",
+        icon: CalendarClock,
+        color: "bg-indigo-600",
+        path: "managemeetings"
       }
     ],
     nav: [
@@ -279,6 +329,11 @@ export const userRolesConfig = {
         label: "Map",
         path: "map",
         icon: Map
+      },
+      {
+        label: "Meetings",
+        path: "managemeetings",
+        icon: CalendarClock
       }
     ]
   },
@@ -302,6 +357,12 @@ export const userRolesConfig = {
         icon: Map,
         color: "bg-blue-500",
         path: "map"
+      },
+      {
+        name: "Manage Meetings",
+        icon: CalendarClock,
+        color: "bg-indigo-600",
+        path: "managemeetings"
       }
     ],
     nav: [
@@ -319,6 +380,11 @@ export const userRolesConfig = {
         label: "Map",
         path: "map",
         icon: Map
+      },
+      {
+        label: "Meetings",
+        path: "managemeetings",
+        icon: CalendarClock
       }
     ]
   },
