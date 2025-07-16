@@ -182,3 +182,12 @@ export const resetPassword = async ({ email, jobRole, newPassword }) => {
   });
 };
 
+// Add these to employeeApi.js
+export const getAllJobRoles = () => {
+  return axios.get(`${empInfoAPI}/employee/roles`);
+};
+
+export const getEmployeesByRole = (role) => {
+  return axios.get(`${empInfoAPI}/employee/by-role/${role}`);
+};
+
