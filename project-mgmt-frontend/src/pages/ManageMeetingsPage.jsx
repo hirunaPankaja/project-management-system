@@ -1,23 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
-import { Eye, Pencil} from "lucide-react"; // 👁️ ✏️ 👍
-
-const userDirectory = {
-  Designer: ["alice@firm.com", "mark@firm.com"],
-  Architect: ["sara@firm.com", "john@firm.com"],
-  Engineer: ["emma@firm.com", "nate@firm.com"]
-};
+import { Eye, Pencil } from "lucide-react";
+import { 
+  getAllJobRoles,
+  getEmployeesByRole
+} from "../services/employeeApi";
 
 const ManageMeetingsPage = () => {
+  // State for meetings data
   const [meetings, setMeetings] = useState([]);
   const [form, setForm] = useState({ title: "", date: "", time: "" });
-  const [selectedRole, setSelectedRole] = useState("Designer");
+  
+  // State for employee data
+  const [roles, setRoles] = useState([]);
+  const [employeesByRole, setEmployeesByRole] = useState({});
+  const [selectedRole, setSelectedRole] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // State for modals
   const [editingIndex, setEditingIndex] = useState(null);
   const [editForm, setEditForm] = useState({ title: "", date: "", time: "", users: [] });
   const [isEditing, setIsEditing] = useState(false);
   const [viewMeeting, setViewMeeting] = useState(null);
+
+  // Fetch all job roles and employees when component loads
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // 1. Get all job roles
+        const rolesResponse = await getAllJobRoles();
+        setRoles(rolesResponse.data);
+        
+        if (rolesResponse.data.length > 0) {
+          setSelectedRole(rolesResponse.data[0]); // Set first role as default
+          
+          // 2. Get employees for each role
+          const employeesMap = {};
+          for (const role of rolesResponse.data) {
+            const employeesResponse = await getEmployeesByRole(role);
+            employeesMap[role] = employeesResponse.data;
+          }
+          setEmployeesByRole(employeesMap);
+        }
+      } catch (error) {
+        console.error("Error loading employee data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
 
   const toggleUser = (email, role, list, setter) => {
     const exists = list.some((u) => u.email === email);
@@ -49,11 +83,19 @@ const ManageMeetingsPage = () => {
     setIsEditing(false);
   };
 
+  if (loading) {
+    return <div className="p-6">Loading employee data...</div>;
+  }
+
+  if (roles.length === 0) {
+    return <div className="p-6">No job roles found.</div>;
+  }
+
   return (
     <div className="p-6 space-y-6">
       <h2 className="text-2xl font-bold">Manage Meetings</h2>
 
-      {/* ➕ Create Meeting Form */}
+      {/* Create Meeting Form */}
       <div className="bg-white p-4 rounded shadow space-y-4">
         <input
           type="text"
@@ -75,27 +117,32 @@ const ManageMeetingsPage = () => {
           className="w-full border p-2 rounded"
         />
 
+        {/* Role Selection Dropdown */}
         <select
           value={selectedRole}
           onChange={(e) => setSelectedRole(e.target.value)}
           className="w-full border p-2 rounded"
         >
-          {Object.keys(userDirectory).map((role) => (
-            <option key={role}>{role}</option>
+          {roles.map((role) => (
+            <option key={role} value={role}>
+              {role.replace("_", " ")}
+            </option>
           ))}
         </select>
 
+        {/* Employee Selection List */}
         <div className="border p-2 rounded h-32 overflow-y-auto">
-          {userDirectory[selectedRole]?.map((email) => (
-            <label key={email} className="block">
+          {employeesByRole[selectedRole]?.map((employee) => (
+            <label key={employee.email} className="block">
               <input
                 type="checkbox"
-                checked={selectedUsers.some((u) => u.email === email)}
-                onChange={() =>
-                  toggleUser(email, selectedRole, selectedUsers, setSelectedUsers)
-                }
-              />{" "}
-              {email}
+                checked={selectedUsers.some((u) => u.email === employee.email)}
+                onChange={() => toggleUser(employee.email, selectedRole, selectedUsers, setSelectedUsers)}
+              />
+              <span className="ml-2">
+                {employee.name} 
+                <span className="text-xs text-gray-500 ml-2">({employee.email})</span>
+              </span>
             </label>
           ))}
         </div>
@@ -108,7 +155,7 @@ const ManageMeetingsPage = () => {
         </button>
       </div>
 
-      {/* 📋 Meetings Table */}
+      {/* Meetings Table */}
       <div className="bg-white p-4 rounded shadow">
         <h3 className="font-semibold mb-3">Scheduled Meetings</h3>
         <table className="w-full border text-sm table-fixed">
@@ -117,7 +164,7 @@ const ManageMeetingsPage = () => {
               <th className="p-2 border">Title</th>
               <th className="p-2 border">Date</th>
               <th className="p-2 border">Time</th>
-              <th className="p-2 border">Users</th>
+              <th className="p-2 border">Participants</th>
               <th className="p-2 border">Actions</th>
             </tr>
           </thead>
@@ -128,7 +175,9 @@ const ManageMeetingsPage = () => {
                   <td className="p-2 border">{m.title}</td>
                   <td className="p-2 border">{m.date}</td>
                   <td className="p-2 border">{m.time}</td>
-                  <td className="p-2 border">{m.users.map((u) => u.email).join(", ")}</td>
+                  <td className="p-2 border">
+                    {m.users.map(u => u.email).join(", ")}
+                  </td>
                   <td className="p-2 border flex gap-3 justify-center">
                     <button onClick={() => openEditModal(i)} title="Edit">
                       <Pencil size={18} className="text-blue-600 hover:text-blue-800" />
@@ -136,7 +185,6 @@ const ManageMeetingsPage = () => {
                     <button onClick={() => setViewMeeting(m)} title="View">
                       <Eye size={18} className="text-green-600 hover:text-green-800" />
                     </button>
-                   
                   </td>
                 </tr>
               ))
@@ -151,7 +199,7 @@ const ManageMeetingsPage = () => {
         </table>
       </div>
 
-      {/* ✏️ Edit Modal */}
+      {/* Edit Modal */}
       <Dialog open={isEditing} onClose={() => setIsEditing(false)} className="relative z-50">
         <div className="fixed inset-0 bg-black/30" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -179,23 +227,23 @@ const ManageMeetingsPage = () => {
             />
 
             <div className="border p-2 rounded h-32 overflow-y-auto">
-              {Object.entries(userDirectory).flatMap(([role, emails]) =>
-                emails.map((email) => (
-                  <label key={email} className="block">
+              {Object.entries(employeesByRole).flatMap(([role, employees]) =>
+                employees.map((employee) => (
+                  <label key={employee.email} className="block">
                     <input
                       type="checkbox"
-                      checked={editForm.users.some((u) => u.email === email)}
+                      checked={editForm.users.some((u) => u.email === employee.email)}
                       onChange={() => {
-                        const exists = editForm.users.find((u) => u.email === email);
+                        const exists = editForm.users.find((u) => u.email === employee.email);
                         setEditForm((prev) => ({
                           ...prev,
                           users: exists
-                            ? prev.users.filter((u) => u.email !== email)
-                            : [...prev.users, { email, role }]
+                            ? prev.users.filter((u) => u.email !== employee.email)
+                            : [...prev.users, { email: employee.email, role }]
                         }));
                       }}
                     />{" "}
-                    {email} <span className="text-sm text-gray-500">({role})</span>
+                    {employee.name} <span className="text-sm text-gray-500">({role})</span>
                   </label>
                 ))
               )}
@@ -216,7 +264,7 @@ const ManageMeetingsPage = () => {
         </div>
       </Dialog>
 
-       {/* 👁️ View Modal */}
+      {/* View Modal */}
       <Dialog open={!!viewMeeting} onClose={() => setViewMeeting(null)} className="relative z-50">
         <div className="fixed inset-0 bg-black/30" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -237,12 +285,17 @@ const ManageMeetingsPage = () => {
                 <div>
                   <strong>Participants:</strong>
                   <ul className="list-disc ml-5 mt-1 space-y-1">
-                    {viewMeeting.users.map((user, idx) => (
-                      <li key={idx}>
-                        {user.email}{" "}
-                        <span className="text-sm text-gray-500">({user.role})</span>
-                      </li>
-                    ))}
+                    {viewMeeting.users.map((user, idx) => {
+                      const employee = Object.values(employeesByRole)
+                        .flat()
+                        .find(e => e.email === user.email);
+                      return (
+                        <li key={idx}>
+                          {employee?.name || user.email}{" "}
+                          <span className="text-sm text-gray-500">({user.role})</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
                 <div className="flex justify-end pt-4">
