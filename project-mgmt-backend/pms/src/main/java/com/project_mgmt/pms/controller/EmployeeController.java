@@ -100,7 +100,7 @@ public class EmployeeController {
         return ResponseEntity.ok(savedComplain);
     }
 
-    //
+    //Get complain list
     @GetMapping("/complains")
     public ResponseEntity<List<Complain>> viewComplains(
             @RequestParam String empId
@@ -197,7 +197,7 @@ public class EmployeeController {
         }
     }
 
-    // Add these to EmployeeController.java
+
     @GetMapping("/roles")
     public ResponseEntity<List<String>> getAllJobRoles() {
         List<String> roles = Arrays.asList(
@@ -228,6 +228,7 @@ public class EmployeeController {
             case "architecture_manager" -> architectureManagerRepository.findAllArchitectureManagerEmployees();
             case "lawyer" -> lawyerRepository.findAllLawyerEmployees();
             case "property_executive" -> propertyExecutiveRepository.findAllPropertyExecutiveEmployees();
+            case ""
             default -> Collections.emptyList();
         };
 

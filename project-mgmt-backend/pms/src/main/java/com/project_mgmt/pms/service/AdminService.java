@@ -21,7 +21,7 @@ public class AdminService {
     @Autowired
     private DesignerRepository designerRepository;
     @Autowired
-    private com.project_mgmt.pms.repository.ArchitectureManager architectureManageRepo;
+    private com.project_mgmt.pms.repository.ArchitectureManagerRepository architectureManageRepo;
     @Autowired
     private DesignManagerRepository designManagerRepository;
     @Autowired
@@ -44,6 +44,8 @@ public class AdminService {
     private AdminRepository adminRepository;
     @Autowired
     private LawyerRepository lawyerRepository;
+    @Autowired
+    private HeadOfDepartmentRepository headOfDepartmentRepository;
 
 
     public Employee registerEmployee(EmployeeRegistrationRequest request) {
@@ -96,6 +98,10 @@ public class AdminService {
                 PropertyExecutive propertyExecutive = populateEmployeeFields(new PropertyExecutive(), nextEmpId, request, randomPassword);
                 saved = propertyExecutiveRepository.save(propertyExecutive);
             }
+            case "head-of-department" -> {
+                HeadOfDepartment headOfDepartment = populateEmployeeFields(new HeadOfDepartment(), nextEmpId, request, randomPassword);
+                saved = headOfDepartmentRepository.save(headOfDepartment);
+            }
             default -> throw new IllegalArgumentException("Invalid job role: " + request.getJobRole());
         }
 
@@ -115,6 +121,9 @@ public class AdminService {
         emp.setEmail(request.getEmail());
         emp.setPassword(password);
         emp.setNic(request.getNic());
+        emp.setPhoneNumber(request.getPhoneNumber());
+        emp.setAddress(request.getAddress());
+        emp.getStartDate(request.getStartDate);
         return emp;
     }
 

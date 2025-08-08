@@ -41,6 +41,8 @@ public class EmployeeService {
     private ProjectManagerRepository projectManagerRepository;
     @Autowired
     private AdminRepository adminRepository;
+    @Autowired
+    private HeadOfDepartmentRepository headOfDepartmentRepository;
 
     @Autowired
     private EmailService emailService;
@@ -76,6 +78,7 @@ public class EmployeeService {
            case "project_manager" -> projectManagerRepository.existsById(empId);
            case "admin" -> adminRepository.existsById(empId);
            case "lawyer" -> lawyerRepository.existsById(empId);
+
            default -> false;
        };
 
@@ -160,6 +163,7 @@ public class EmployeeService {
             case "property_executive" -> propertyExecutiveRepository.existsById(employee.get().getEmpId());
             case "project_manager" -> projectManagerRepository.existsById(employee.get().getEmpId());
             case "admin" -> adminRepository.existsById(employee.get().getEmpId());
+            case "head_of_department" -> headOfDepartmentRepository.existsById(employee.get().getEmpId());
             default -> false;
         };
 

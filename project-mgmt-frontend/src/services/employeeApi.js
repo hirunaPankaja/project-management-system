@@ -191,3 +191,22 @@ export const getEmployeesByRole = (role) => {
   return axios.get(`${empInfoAPI}/employee/by-role/${role}`);
 };
 
+// Create a new meeting
+export const createMeeting = (meetingData) => {
+  return axios.post(`${API_BASE_URL}/api/meeting`, meetingData);
+};
+
+// Get all meetings
+export const getAllMeetings = () => {
+  return axios.get(`${empInfoAPI}/api/meeting`);
+};
+
+// Get meetings created by a specific user
+export const getMyMeetings = (empId) => {
+  return axios.get(`${API_BASE_URL}/api/meeting/created-by/${empId}`);
+};
+
+// Get meetings assigned to a specific user
+export const getAssignedMeetings = (empId) => {
+  return axios.get(`${API_BASE_URL}/api/meeting/assigned-to/${empId}`);
+};

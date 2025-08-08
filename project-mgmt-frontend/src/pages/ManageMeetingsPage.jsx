@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
-import { Eye, Pencil } from "lucide-react";
+import { Eye, Pencil, Plus, Filter } from "lucide-react";
 import { 
   getAllJobRoles,
-  getEmployeesByRole
+  getEmployeesByRole,
+  createMeeting,
+  getAllMeetings,
+  getMyMeetings,
+  getAssignedMeetings
 } from "../services/employeeApi";
 
-const ManageMeetingsPage = () => {
+const ManageMeetingsPage = ({ currentUser }) => {
   // State for meetings data
   const [meetings, setMeetings] = useState([]);
-  const [form, setForm] = useState({ title: "", date: "", time: "" });
+  const [form, setForm] = useState({ 
+    meetingType: "online", 
+    participants: [], 
+    meetingDate: "", 
+    meetingTime: "", 
+    venue: "", 
+    meetingDescription: "" 
+  });
   
   // State for employee data
   const [roles, setRoles] = useState([]);
@@ -17,25 +28,54 @@ const ManageMeetingsPage = () => {
   const [selectedRole, setSelectedRole] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // State for modals
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [editForm, setEditForm] = useState({ title: "", date: "", time: "", users: [] });
-  const [isEditing, setIsEditing] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [filter, setFilter] = useState("all"); // 'all', 'created', 'assigned'
   const [viewMeeting, setViewMeeting] = useState(null);
 
-  // Fetch all job roles and employees when component loads
+  // Toggle user selection
+  const toggleUser = (empId, name, role) => {
+    const exists = selectedUsers.some(u => u.empId === empId);
+    if (exists) {
+      setSelectedUsers(selectedUsers.filter(u => u.empId !== empId));
+    } else {
+      setSelectedUsers([...selectedUsers, { empId, name, role }]);
+    }
+  };
+
+  // Fetch meetings based on filter
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchMeetings = async () => {
       try {
-        // 1. Get all job roles
+        setLoading(true);
+        let response;
+        if (filter === "created") {
+          response = await getMyMeetings(currentUser.empId);
+        } else if (filter === "assigned") {
+          response = await getAssignedMeetings(currentUser.empId);
+        } else {
+          response = await getAllMeetings();
+        }
+        setMeetings(response.data);
+      } catch (error) {
+        console.error("Error loading meetings:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchMeetings();
+  }, [filter, currentUser, showCreateModal]);
+
+  // Fetch roles and employees
+  useEffect(() => {
+    const fetchRolesAndEmployees = async () => {
+      try {
         const rolesResponse = await getAllJobRoles();
         setRoles(rolesResponse.data);
         
         if (rolesResponse.data.length > 0) {
-          setSelectedRole(rolesResponse.data[0]); // Set first role as default
+          setSelectedRole(rolesResponse.data[0]);
           
-          // 2. Get employees for each role
           const employeesMap = {};
           for (const role of rolesResponse.data) {
             const employeesResponse = await getEmployeesByRole(role);
@@ -44,273 +84,307 @@ const ManageMeetingsPage = () => {
           setEmployeesByRole(employeesMap);
         }
       } catch (error) {
-        console.error("Error loading employee data:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error loading roles/employees:", error);
       }
     };
     
-    fetchData();
+    fetchRolesAndEmployees();
   }, []);
 
-  const toggleUser = (email, role, list, setter) => {
-    const exists = list.some((u) => u.email === email);
-    if (exists) {
-      setter(list.filter((u) => u.email !== email));
-    } else {
-      setter([...list, { email, role }]);
+  const handleCreate = async () => {
+    if (!form.meetingDescription || !form.meetingDate || !form.meetingTime || selectedUsers.length === 0) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    try {
+      const meetingData = {
+        meetingType: form.meetingType,
+        participants: selectedUsers.map(u => u.empId),
+        meetingDate: form.meetingDate,
+        meetingTime: form.meetingTime,
+        venue: form.meetingType === "physical" ? form.venue : "Online",
+        meetingDescription: form.meetingDescription,
+        createdBy: currentUser.empId
+      };
+
+      await createMeeting(meetingData);
+      setShowCreateModal(false);
+      resetForm();
+    } catch (error) {
+      console.error("Error creating meeting:", error);
+      alert("Failed to create meeting. Please try again.");
     }
   };
 
-  const handleCreate = () => {
-    if (!form.title || !form.date || !form.time || selectedUsers.length === 0) return;
-    setMeetings([...meetings, { ...form, users: selectedUsers }]);
-    setForm({ title: "", date: "", time: "" });
+  const resetForm = () => {
+    setForm({ 
+      meetingType: "online", 
+      participants: [], 
+      meetingDate: "", 
+      meetingTime: "", 
+      venue: "", 
+      meetingDescription: "" 
+    });
     setSelectedUsers([]);
   };
 
-  const openEditModal = (i) => {
-    const m = meetings[i];
-    setEditForm({ ...m });
-    setEditingIndex(i);
-    setIsEditing(true);
-  };
-
-  const saveEdit = () => {
-    const updated = [...meetings];
-    updated[editingIndex] = editForm;
-    setMeetings(updated);
-    setIsEditing(false);
-  };
-
   if (loading) {
-    return <div className="p-6">Loading employee data...</div>;
-  }
-
-  if (roles.length === 0) {
-    return <div className="p-6">No job roles found.</div>;
+    return <div className="p-6">Loading data...</div>;
   }
 
   return (
     <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-bold">Manage Meetings</h2>
-
-      {/* Create Meeting Form */}
-      <div className="bg-white p-4 rounded shadow space-y-4">
-        <input
-          type="text"
-          placeholder="Meeting Title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="date"
-          value={form.date}
-          onChange={(e) => setForm({ ...form, date: e.target.value })}
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="time"
-          value={form.time}
-          onChange={(e) => setForm({ ...form, time: e.target.value })}
-          className="w-full border p-2 rounded"
-        />
-
-        {/* Role Selection Dropdown */}
-        <select
-          value={selectedRole}
-          onChange={(e) => setSelectedRole(e.target.value)}
-          className="w-full border p-2 rounded"
-        >
-          {roles.map((role) => (
-            <option key={role} value={role}>
-              {role.replace("_", " ")}
-            </option>
-          ))}
-        </select>
-
-        {/* Employee Selection List */}
-        <div className="border p-2 rounded h-32 overflow-y-auto">
-          {employeesByRole[selectedRole]?.map((employee) => (
-            <label key={employee.email} className="block">
-              <input
-                type="checkbox"
-                checked={selectedUsers.some((u) => u.email === employee.email)}
-                onChange={() => toggleUser(employee.email, selectedRole, selectedUsers, setSelectedUsers)}
-              />
-              <span className="ml-2">
-                {employee.name} 
-                <span className="text-xs text-gray-500 ml-2">({employee.email})</span>
-              </span>
-            </label>
-          ))}
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Manage Meetings</h2>
+        <div className="flex gap-4">
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="border p-2 rounded"
+          >
+            <option value="all">All Meetings</option>
+            <option value="created">My Created Meetings</option>
+            <option value="assigned">Assigned To Me</option>
+          </select>
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 flex items-center gap-2"
+          >
+            <Plus size={18} />
+            Create Meeting
+          </button>
         </div>
-
-        <button
-          onClick={handleCreate}
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-        >
-          Create Meeting
-        </button>
       </div>
 
       {/* Meetings Table */}
       <div className="bg-white p-4 rounded shadow">
-        <h3 className="font-semibold mb-3">Scheduled Meetings</h3>
-        <table className="w-full border text-sm table-fixed">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-2 border">Title</th>
-              <th className="p-2 border">Date</th>
-              <th className="p-2 border">Time</th>
-              <th className="p-2 border">Participants</th>
-              <th className="p-2 border">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {meetings.length > 0 ? (
-              meetings.map((m, i) => (
-                <tr key={i}>
-                  <td className="p-2 border">{m.title}</td>
-                  <td className="p-2 border">{m.date}</td>
-                  <td className="p-2 border">{m.time}</td>
-                  <td className="p-2 border">
-                    {m.users.map(u => u.email).join(", ")}
-                  </td>
-                  <td className="p-2 border flex gap-3 justify-center">
-                    <button onClick={() => openEditModal(i)} title="Edit">
-                      <Pencil size={18} className="text-blue-600 hover:text-blue-800" />
-                    </button>
-                    <button onClick={() => setViewMeeting(m)} title="View">
-                      <Eye size={18} className="text-green-600 hover:text-green-800" />
-                    </button>
+        <div className="overflow-x-auto">
+          <table className="w-full border text-sm">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="p-2 border">Description</th>
+                <th className="p-2 border">Type</th>
+                <th className="p-2 border">Date</th>
+                <th className="p-2 border">Time</th>
+                <th className="p-2 border">Venue</th>
+                <th className="p-2 border">Participants</th>
+                <th className="p-2 border">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {meetings.length > 0 ? (
+                meetings.map((m) => (
+                  <tr key={m.meetingId}>
+                    <td className="p-2 border">{m.meetingDescription}</td>
+                    <td className="p-2 border">{m.meetingType === "online" ? "Online" : "Physical"}</td>
+                    <td className="p-2 border">{new Date(m.meetingDate).toLocaleDateString()}</td>
+                    <td className="p-2 border">{m.meetingTime}</td>
+                    <td className="p-2 border">{m.venue}</td>
+                    <td className="p-2 border">
+                      {m.participants ? m.participants.length : 0} participants
+                    </td>
+                    <td className="p-2 border flex gap-3 justify-center">
+                      <button onClick={() => setViewMeeting(m)} title="View">
+                        <Eye size={18} className="text-green-600 hover:text-green-800" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="text-center text-gray-400 p-4">
+                    No meetings found
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} className="text-center text-gray-400 p-4">
-                  No meetings scheduled
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Edit Modal */}
-      <Dialog open={isEditing} onClose={() => setIsEditing(false)} className="relative z-50">
-        <div className="fixed inset-0 bg-black/30" />
+      {/* Create Meeting Modal */}
+      <Dialog open={showCreateModal} onClose={() => setShowCreateModal(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="bg-white p-6 rounded max-w-md w-full space-y-4">
-            <Dialog.Title className="text-lg font-semibold">Edit Meeting</Dialog.Title>
+          <Dialog.Panel className="w-full max-w-2xl bg-white rounded p-6 space-y-4">
+            <Dialog.Title className="text-xl font-bold">Create New Meeting</Dialog.Title>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block font-medium mb-1">Meeting Type</label>
+                <select
+                  value={form.meetingType}
+                  onChange={(e) => setForm({...form, meetingType: e.target.value})}
+                  className="w-full border p-2 rounded"
+                >
+                  <option value="online">Online</option>
+                  <option value="physical">Physical</option>
+                </select>
+              </div>
 
-            <input
-              type="text"
-              value={editForm.title}
-              onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-              className="w-full border p-2 rounded"
-              placeholder="Meeting Title"
-            />
-            <input
-              type="date"
-              value={editForm.date}
-              onChange={(e) => setEditForm({ ...editForm, date: e.target.value })}
-              className="w-full border p-2 rounded"
-            />
-            <input
-              type="time"
-              value={editForm.time}
-              onChange={(e) => setEditForm({ ...editForm, time: e.target.value })}
-              className="w-full border p-2 rounded"
-            />
-
-            <div className="border p-2 rounded h-32 overflow-y-auto">
-              {Object.entries(employeesByRole).flatMap(([role, employees]) =>
-                employees.map((employee) => (
-                  <label key={employee.email} className="block">
-                    <input
-                      type="checkbox"
-                      checked={editForm.users.some((u) => u.email === employee.email)}
-                      onChange={() => {
-                        const exists = editForm.users.find((u) => u.email === employee.email);
-                        setEditForm((prev) => ({
-                          ...prev,
-                          users: exists
-                            ? prev.users.filter((u) => u.email !== employee.email)
-                            : [...prev.users, { email: employee.email, role }]
-                        }));
-                      }}
-                    />{" "}
-                    {employee.name} <span className="text-sm text-gray-500">({role})</span>
-                  </label>
-                ))
+              {form.meetingType === "physical" && (
+                <div>
+                  <label className="block font-medium mb-1">Venue</label>
+                  <input
+                    type="text"
+                    placeholder="Meeting Venue"
+                    value={form.venue}
+                    onChange={(e) => setForm({...form, venue: e.target.value})}
+                    className="w-full border p-2 rounded"
+                  />
+                </div>
               )}
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
-              <button onClick={() => setIsEditing(false)} className="text-gray-500 hover:underline">
+            <div>
+              <label className="block font-medium mb-1">Meeting Description*</label>
+              <input
+                type="text"
+                placeholder="Meeting Description"
+                value={form.meetingDescription}
+                onChange={(e) => setForm({...form, meetingDescription: e.target.value})}
+                className="w-full border p-2 rounded"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block font-medium mb-1">Date*</label>
+                <input
+                  type="date"
+                  value={form.meetingDate}
+                  onChange={(e) => setForm({...form, meetingDate: e.target.value})}
+                  className="w-full border p-2 rounded"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block font-medium mb-1">Time*</label>
+                <input
+                  type="time"
+                  value={form.meetingTime}
+                  onChange={(e) => setForm({...form, meetingTime: e.target.value})}
+                  className="w-full border p-2 rounded"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block font-medium mb-1">Select Role</label>
+              <select
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className="w-full border p-2 rounded"
+              >
+                {roles.map((role) => (
+                  <option key={role} value={role}>
+                    {role.replace("_", " ")}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block font-medium mb-1">Select Participants*</label>
+              <div className="border p-2 rounded h-32 overflow-y-auto">
+                {employeesByRole[selectedRole]?.map((employee) => (
+                  <label key={employee.empId} className="flex items-center p-1 hover:bg-gray-50">
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.some(u => u.empId === employee.empId)}
+                      onChange={() => toggleUser(employee.empId, employee.name, selectedRole)}
+                      className="mr-2"
+                    />
+                    <span>{employee.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {selectedUsers.length > 0 && (
+              <div className="mt-4">
+                <label className="block font-medium mb-2">Selected Participants:</label>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {selectedUsers.map((user, index) => (
+                    <span 
+                      key={index} 
+                      className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center"
+                    >
+                      {user.name}
+                      <button 
+                        onClick={() => toggleUser(user.empId, user.name, user.role)}
+                        className="ml-2 text-blue-600 hover:text-blue-800"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="px-4 py-2 border rounded hover:bg-gray-100"
+              >
                 Cancel
               </button>
               <button
-                onClick={saveEdit}
-                className="bg-blue-600 text-white px-4 py-2 rounded"
+                onClick={handleCreate}
+                className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
               >
-                Save Changes
+                Create Meeting
               </button>
             </div>
           </Dialog.Panel>
         </div>
       </Dialog>
 
-      {/* View Modal */}
-      <Dialog open={!!viewMeeting} onClose={() => setViewMeeting(null)} className="relative z-50">
-        <div className="fixed inset-0 bg-black/30" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="bg-white p-6 rounded max-w-md w-full space-y-4">
-            <Dialog.Title className="text-lg font-semibold">Meeting Details</Dialog.Title>
+      {/* View Meeting Modal */}
+      {viewMeeting && (
+        <Dialog open={!!viewMeeting} onClose={() => setViewMeeting(null)} className="relative z-50">
+          <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+          <div className="fixed inset-0 flex items-center justify-center p-4">
+            <Dialog.Panel className="w-full max-w-2xl bg-white rounded p-6 space-y-4">
+              <Dialog.Title className="text-xl font-bold">Meeting Details</Dialog.Title>
+              
+              <div className="space-y-3">
+                <div>
+                  <span className="font-medium">Description:</span> {viewMeeting.meetingDescription}
+                </div>
+                <div>
+                  <span className="font-medium">Type:</span> {viewMeeting.meetingType === "online" ? "Online" : "Physical"}
+                </div>
+                <div>
+                  <span className="font-medium">Date:</span> {new Date(viewMeeting.meetingDate).toLocaleDateString()}
+                </div>
+                <div>
+                  <span className="font-medium">Time:</span> {viewMeeting.meetingTime}
+                </div>
+                <div>
+                  <span className="font-medium">Venue:</span> {viewMeeting.venue}
+                </div>
+                <div>
+                  <span className="font-medium">Participants:</span> {viewMeeting.participants ? viewMeeting.participants.length : 0}
+                </div>
+              </div>
 
-            {viewMeeting && (
-              <>
-                <div>
-                  <strong>Title:</strong> {viewMeeting.title}
-                </div>
-                <div>
-                  <strong>Date:</strong> {viewMeeting.date}
-                </div>
-                <div>
-                  <strong>Time:</strong> {viewMeeting.time}
-                </div>
-                <div>
-                  <strong>Participants:</strong>
-                  <ul className="list-disc ml-5 mt-1 space-y-1">
-                    {viewMeeting.users.map((user, idx) => {
-                      const employee = Object.values(employeesByRole)
-                        .flat()
-                        .find(e => e.email === user.email);
-                      return (
-                        <li key={idx}>
-                          {employee?.name || user.email}{" "}
-                          <span className="text-sm text-gray-500">({user.role})</span>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-                <div className="flex justify-end pt-4">
-                  <button
-                    onClick={() => setViewMeeting(null)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Close
-                  </button>
-                </div>
-              </>
-            )}
-          </Dialog.Panel>
-        </div>
-      </Dialog>
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setViewMeeting(null)}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                >
+                  Close
+                </button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
     </div>
   );
 };

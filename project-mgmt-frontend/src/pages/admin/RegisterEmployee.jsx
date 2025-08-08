@@ -147,6 +147,7 @@ function RegisterEmployee() {
             <option value="property-officer">Property Officer</option>    
             <option value="property-manager">Property Manager</option>
             <option value="property-executive">Property Executive</option> 
+            <option value="head-of-department">Head of Department</option>
                     
           </select>
         </div>
