@@ -123,7 +123,7 @@ public class AdminService {
         emp.setNic(request.getNic());
         emp.setPhoneNumber(request.getPhoneNumber());
         emp.setAddress(request.getAddress());
-        emp.getStartDate(request.getStartDate);
+       
         return emp;
     }
 

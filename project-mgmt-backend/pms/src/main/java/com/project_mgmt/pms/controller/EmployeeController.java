@@ -228,7 +228,7 @@ public class EmployeeController {
             case "architecture_manager" -> architectureManagerRepository.findAllArchitectureManagerEmployees();
             case "lawyer" -> lawyerRepository.findAllLawyerEmployees();
             case "property_executive" -> propertyExecutiveRepository.findAllPropertyExecutiveEmployees();
-            case ""
+
             default -> Collections.emptyList();
         };
 
