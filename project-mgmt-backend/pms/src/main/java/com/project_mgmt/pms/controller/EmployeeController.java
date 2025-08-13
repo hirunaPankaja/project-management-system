@@ -55,6 +55,8 @@ public class EmployeeController {
 
     @Autowired
     private ArchitectureManagerRepository architectureManagerRepository;
+    @Autowired
+    private HeadOfDepartmentRepository headOfDepartmentRepository;
 
     //log in
     @PostMapping("/login")
@@ -228,7 +230,7 @@ public class EmployeeController {
             case "architecture_manager" -> architectureManagerRepository.findAllArchitectureManagerEmployees();
             case "lawyer" -> lawyerRepository.findAllLawyerEmployees();
             case "property_executive" -> propertyExecutiveRepository.findAllPropertyExecutiveEmployees();
-
+            case "head_of_department" -> headOfDepartmentRepository.findAllHeadOfDepartmentEmployees();
             default -> Collections.emptyList();
         };
 
